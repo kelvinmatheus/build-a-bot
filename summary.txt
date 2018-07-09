@@ -447,3 +447,20 @@ computed function
 v-once
 
 ####
+
+
+3.9 - Conditionally Displaying Content with v-if and v-show
+
+# So the question is, when should we use v-if, and when should we use v-show? Basically, if the content that you are showing and hiding is expensive to generate, and it's going to be shown and hidden frequently, then you should use v-show because Vue won't have to go through the expensive rendering process each time it's redisplayed.
+
+ They expected a boolean for showing or not the element.
+
+v-if ->
+Remove the element from the DOM
+v-show ->
+This on add the style display: none
+
+
+# if the content that you are showing and hiding is expensive to generate, and it's going to be shown and hidden frequently, then you should use v-show because Vue won't have to go through the expensive rendering process each time it's redisplayed.
+
+# But if your content is not expensive to render like our current example, or if it's not going to be hidden and redisplayed frequently, then v-if is perfect. Right now we're just showing and hiding a span element, but imagine if this was a Vue component that we were showing and hiding, and imagine that that component had a child component which also had child components. You can see how that can get really expensive to rerender. In that case, v-show would be better. In our case, v-if is perfect because it's just a span; it's not expensive to render at all, so we'll leave it with a v-if. Next, let's take a look at how to repeat elements using v-for.
