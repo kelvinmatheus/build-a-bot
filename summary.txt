@@ -624,3 +624,16 @@ To use the created lifecycle hook just add it to the export default object:
 
 created() {
 }
+
+
+3.17 - Reducing Duplication with Mixins
+        Let's see how to do that. Let's take this created lifecycle hook and move it into a mixin. So we'll grab it from here, and then let's create a new file called created-hook-mixin.js. And then here we'll just export an object. So basically, we're just export a component configuration object here, and whatever is in this object will be merged in with any components that you use it in. So to use it, let's go back into our RobotBuilder, and we're going to import our createdHookMixin from created-hook-mixin. And then we're just going to use this down here in a mixin property, so mixins, and then this is just an array of mixins, and we're only going to have one, the createdHookMixin. Cool. Now this mixin can be used in multiple components. Right now, we're just going to be using it in this one. And if we come back over to our web app and open our console and refresh, you can see our component created messages still getting logged. And so our created hook is still working, but it is now extracted out into a mixin that could be reused. Again, our application isn't quite mature enough yet for a great example for mixins. If you want to see a better example of this, in the Managing State with Vuex module, we talk about it when we have a few components that all need the same data, so we'll create a mixin in order to share the logic that will be used to fetch that data across multiple components. You can find that in the clip on Using Actions to Work with APIs and Asynchronous Data. I just wanted to talk about it a little bit here in the components section so that you knew about it. And just be aware, you can use a mixin to share any component option across multiple components including lifecycle hooks, props, computed properties, etc.
+
+
+Mixins are a way to share functionality across multiple components. Basically, any component option can be extracted out into a mixin file, and then when you import the mixin, it will be merged into the rest of your component options.
+
+
+It will be merged in to any component that use it.
+
+
+You can use a mixin to share any component option across multiple components including lifecycle hooks, props, computed properties, etc.
