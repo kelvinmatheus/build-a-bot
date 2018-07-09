@@ -386,3 +386,40 @@ Shot version of the binding
 
 v-bind: -> replaced by :
 v-on: -> replaced by @
+
+--> 3.7 - Binding to Computed Properties
+
+# Computed properties are like a Decorator for the object. Where we put our render logic there and return only an object to be manipulated inside the template section, which should not have logic on it.
+
+Sometimes you want to be able to easily bind to something in your HTML template that involves a complex calculation.
+Doing complex calculations in your HTML template isn't really a great idea.
+
+What would be nice is if we had a selected robot property on our component that we can use.
+
+# All of these expressions are a little ugly. What would be nice is if we had a selected robot property on our component that we can use.
+From
+<img :src="availableParts.heads[selectedHeadIndex].src" title="head"/>
+To
+<img :src="selectedRobot.head.src" title="head"/>
+
+like the methods property, this contains methods.
+
+computed: {
+  selectedRobot() {
+    return {
+      head: availableParts.heads[this.selectedHeadIndex],
+      leftArm: availableParts.arms[this.selectedLeftArmIndex],
+      torso: availableParts.torsos[this.selectedTorsoIndex],
+      rightArm: availableParts.arms[this.selectedRightArmIndex],
+      base: availableParts.bases[this.selectedBaseIndex]
+    }
+  }
+}
+
+So this is better, and while this one just helps simplify our template a little bit, there are cases where it can simplify them a lot. You really want to be careful not to do too much logic in your templates, and computed properties make that easy.
+
+### Obs
+# Inside the expression, you have access to data from the exported section of the current component.
+data() attributes
+computed functions
+method functions
