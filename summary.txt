@@ -378,3 +378,11 @@ methods -> it is another section which will be used to store every function used
       }
     }
   }
+
+
+--> 3.6 - Using Shorthand Bindings
+
+Shot version of the binding
+
+v-bind: -> replaced by :
+v-on: -> replaced by @
