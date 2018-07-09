@@ -252,3 +252,88 @@ Do not put components directly inside the components folder. It will no scale ve
 Structure your app by feature areas.
 
 Create a new 'home' folder
+
+--
+
+This make the component able to be exported into other files.
+
+<script>
+  export default {
+    name: 'RobotBuilder'
+  };
+</script>
+
+--> 3.4 - Binding Attributes to Data with v-bind
+
+In order to make our new Build page a little more dynamic, we need to start by binding it to data from the component instead of these images being hardcoded in the HTML template.
+
+In order to provide data to our component, we need to update our component options to have a data function.
+
+So down here, we'll add that right here. So this is just going to be a function, and right now we'll just return an empty object.
+
+data() {
+  return {}
+}
+
+
+Data file structure
+
+---
+parts.js
+
+# So we're using web pack's require.context here to make web pack aware of the image URLs so that we can just use them throughout this JSON data as relative URLs. So down here on line 10, you can see that we're calling images function and passing in a relative URL.
+# When this is compiled by web pack, this will point to the relative URL of this image file.
+const images = require.context('./images', true, /\.png$/)
+
+# JSON data
+const parts = {
+  heads: [
+    {
+      id: 1,
+      description: 'A robot head with an unusually large eye and teloscpic neck -- excellent for exploring high spaces.',
+      title: 'Large Cyclops',
+      src: images('./head-big-eye.png'),
+      type: 'heads',
+      cost: 1225.5
+    },
+    {
+      id: 2,
+      description: 'A friendly robot head with two eyes and a smile -- great for domestic use.',
+      title: 'Friendly Bot',
+      src: images('./head-friendly.png'),
+      cost: 945.0,
+      type: 'heads',
+      onSale: true
+    }
+  ]
+};
+
+# Export the data
+export default parts
+---
+
+v-bind -> it is used for apply an expression for the element that it is declared in.
+
+Variables, from the data() function, are available inside the expression.
+
+# we want to bind it to an expression. We can do that like this. So this says bind the source attribute of this image element to this expression in the quotes. And inside that expression, we can access availableParts. So this is the availableParts object that we exposed in our data function.
+
+
+# Thanks to web pack, and we talked about this just a minute ago, this is the relative URL to the image for this head
+v-bind:src="availableParts.heads[0].src"
+
+
+# So now our data object is an object with an availableParts property that is set to that JSON data.
+RobotBuilder.vue
+<script>
+  import availableParts from '../data/parts';
+
+  export default {
+    name: 'RobotBuilder',
+    data() {
+      return {
+        availableParts,
+      };
+    }
+  };
+</script>
