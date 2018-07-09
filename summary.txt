@@ -464,3 +464,43 @@ This on add the style display: none
 # if the content that you are showing and hiding is expensive to generate, and it's going to be shown and hidden frequently, then you should use v-show because Vue won't have to go through the expensive rendering process each time it's redisplayed.
 
 # But if your content is not expensive to render like our current example, or if it's not going to be hidden and redisplayed frequently, then v-if is perfect. Right now we're just showing and hiding a span element, but imagine if this was a Vue component that we were showing and hiding, and imagine that that component had a child component which also had child components. You can see how that can get really expensive to rerender. In that case, v-show would be better. In our case, v-if is perfect because it's just a span; it's not expensive to render at all, so we'll leave it with a v-if. Next, let's take a look at how to repeat elements using v-for.
+
+
+3.10 - Repeating Elements with v-for
+
+### Atention
+
+let's add a cart property, and we'll default it to an empty array. And it's important that we initialize this variable here in the data function. If we don't do it here, Vue won't notice that the data is changing. Vue's change detection works by hooking into the getters and setters of properties in the data function. And so even if we were to add a cart variable below by saying this.cart=newArray, Vue wouldn't even notice it because it never hooked into it.
+
+
+# So we'll say this.cart.push, and then just for immutability purposes, I want to use Object.assign here so that the robot that is in the array isn't the same instance as the selected robot property. This isn't really a Vue thing; this is more of a good programming practice in JavaScript to make sure that you don't have inadvertent pointers to the same object in your code.
+
+// 1 - Start with an empty object {}
+// 2 - assign robot
+// 3 - Content of the robot
+// the result we will have a copy of the robot object with the cost add to it. Them we push it into the cart.
+this.cart.push(Object.assign({}, robot, { cost }));
+
+cart is the attribute that has the data
+robot is the element from the array
+index is the index of the array
+
+v-bind:key or :key or key="" is used to add a key to the element repeated. It is a requirement of Vue.
+
+:key="index" -> will get the index from the for expression
+key="index" -> here, index is only a string.
+
+<tr v-for="(robot, index) in cart" :key="index">
+  <td>{{robot.head.title}}</td>
+  <td class="cost">{{robot.cost}}</td>
+</tr>
+
+# Without the key attribute
+<tr v-for="robot in cart">
+
+# There's just one caveat here. Whenever you're repeating data, Vue needs to be able to, for performance reasons, identify each element in there for updates. And so we need to add a unique key attribute to our repeated table row element.
+
+### Obs
+
+# This is just a performance warning that you'll see in the Vue docs
+For performance, you should not use v-if and v-for in the same element
