@@ -1,0 +1,245 @@
+
+2 -
+
+2.2.
+The heart of Vue application is  The Vue Instance.
+
+A Vue instance is always created when you call
+
+new Vue()
+
+In a typical Vue application you will only have one Vue instance.
+
+You will usually tell him to load a component. Doing by passing an option object with a render function which tells to render a app component.
+
+new Vue({ render: h => h(App})
+
+
+Component hierarchy
+
+The App component is the top level component of this hierarchy.
+
+And it can have a child component.
+
+
+Router
+
+Router-view
+Show the content of the current URL.
+
+The content of the router-view is updated when the URL changes.
+
+2.3.
+
+Install Git
+
+Node Version Manager NVM
+https://github.com/creationix/nvm
+
+Install Node with the NVM. See the last version in the following link.
+https://nodejs.org/en/
+$ nvm install 8.12.3
+
+NVM use this version
+$ nvm use 8.11.3
+
+3 -  Creating Vue.js Components and Using Template Syntax.
+
+CLI
+
+Use it if you want to deploy the application to production
+
+$ npm install -g @vue/cli
+
+To install specific version
+$ npm install -g @vue/cli@3.0.0-rc.3
+
+Create a project with Vue CLI
+
+$ vue create project-name
+
+Install with
+Vue CLI v3.0.0-rc.3
+? Please pick a preset: (Use arrow keys)
+❯ default (babel, eslint)
+  Manually select features
+
+
+? Check the features needed for your project: (Press <space> to select, <a> to toggle all, <i> to invert selection)
+❯◉ Babel
+ ◯ TypeScript
+ ◯ Progressive Web App (PWA) Support
+ ◯ Router
+ ◯ Vuex
+ ◯ CSS Pre-processors
+ ◉ Linter / Formatter
+ ◯ Unit Testing
+ ◯ E2E Testing
+
+
+Choose the features wanted.
+
+Each one have an ability to do several things including.
+
+Prompt more information in the command line
+Modifing web pack config
+Install NPM packages and generating files
+
+This is from the new Vue plugin architecture CLI 3
+
+The idea is to create 0 config environment. The create a lot of config that you do not need to worry about that.
+
+You can choose the feature now or later. If do not have now, a plugin can be created in the future.
+
+Linter used to Conde styling
+Execute it whenever a save a file
+
+
+Vue CLI v3.0.0-rc.3
+? Please pick a preset: Manually select features
+? Check the features needed for your project: Babel, Linter
+? Pick a linter / formatter config: Airbnb
+? Pick additional lint features: (Press <space> to select, <a> to toggle all, <i> to invert selection)
+❯◉ Lint on save
+ ◯ Lint and fix on commit
+
+Vue CLI v3.0.0-rc.3
+? Please pick a preset: Manually select features
+? Check the features needed for your project: Babel, Linter
+? Pick a linter / formatter config: Airbnb
+? Pick additional lint features: Lint on save
+? Where do you prefer placing config for Babel, PostCSS, ESLint, etc.? In dedicated config files
+? Save this as a preset for future projects? (y/N)
+
+
+Install the following plugins if your IDE has them. The following set can be installed in the Visual Studio Code.
+
+ESLint
+Vetur
+vue
+
+
+——
+
+$ npm run serve
+
+It will compile the application for development and an start the development server in the port 8080
+
+Vue style guide
+Vue style rules said to create components with 2 words name minimum
+
+ I didn't need to hit refresh on this page in order to see my changes. That's because we are using, behind the scenes Vue CLI is using the webpack DevServer, including Hot Module Replacement. So as we make changes to our code, the changes immediately show up in our browser without us having to refresh.
+
+
+——
+
+-> 3.2
+
+--> Global components
+
+Single-file components (this course will only work with this one)
+
+The easier way to get thing render in Vue is to create a Vue instance.
+
+Like this
+
+new Vue({
+    template: '<div>Hello World</div>',
+    el: '#app',
+});
+
+
+new Vue -> create a new instance of Vue
+template: '<div>Hello World</div>' -> We pass an object option a simple Hello World template.
+el: '#app -> Which element on the screen Vue will mount the template in.
+
+And If I want to break things up in smaller usable component?
+
+We can do this with Global Components.
+
+
+—
+
+And this last line should look a little familiar. This is the options object, and it is the same type of object that we're passing into our Vue instance down here, except that we're just not specifying an element property (el).
+Components are just like view instance but without the ‘el’
+
+ To demonstrate this, let's pull this part of the template out into a separate component. So just above this, we'll create a new component, and notice here that we're calling Vue.component, and then we're passing in the name of the component here.
+
+'World' -> it is the component name
+
+const World = Vue.component(
+    'World',
+    { template: '<span>World</span>' },
+);
+
+The World component is assigned to the World variable.
+This const variable will make possible to access the component by <World />
+
+
+
+This should help underscore the fact that components are really just Vue instances. With just one or two exceptions, the options object that you pass into a new component has the exact same properties available as the one you pass in to a Vue instance. So anyhow, notice that our new World component is assigned to this World variable. So now we can replace this part of our component with that component like this.
+
+From this:
+
+new Vue({
+    template: '<div>Hello World</div>',
+    el: '#app',
+});
+
+to this:
+
+new Vue({
+    template: '<div>Hello <World /></div>',
+    el: '#app',
+});
+
+This World component is a global component. It's just a global constant that I could use anywhere I want.
+
+
+ This type of component is great for fairly small applications and especially great for prototyping, but it's not a great option for full, single-page applications at larger scale for a few reasons.
+
+First of all, in larger applications, global variables inevitably cause problems because they can be hard to location, but more importantly, it's easy to run into naming conflicts.
+
+Secondly, global components use string templates. That means all of your HTML has to be defined inside a JavaScript string, which means you don't get any syntax highlighting, and you end up doing lots of escaping.
+
+Another limitation of global components is that while they nicely encapsulate your HTML template and component logic, CSS is completely left out of the encapsulation, requiring you to rely on global CSS styling.
+
+And finally, global components have no build-time compilation support, meaning, for example, you can't do any sort of preprocessing with things like Babel. Single-file components help us with all these limitations.
+
+
+--> Single-file component
+
+A single-file component is a file with a Vue extension.
+
+There are typically three sections in a Vue file, including a template section, a script section, and a style section.
+
+The template and script sections are required, whereas the style section is optional.
+
+1 - the template section is where we define our HTML template.
+2 - The script section is where we define the JavaScript functionality of our component and where we export it so that it can be exported elsewhere.
+3 - the style section is where we define the CSS classes used by our template.
+
+HomeWorld.vue
+
+# Required - Where we define HTML
+<template>
+</template>
+
+# Required - Define JS functionality of our component and export to be reused in other places.
+<script>
+</script>
+
+# Optional - Define css used in this template.
+<style>
+</style>
+
+
+Of course, if you look at this file, no browser is going to be able to render a file like this, so Vue files are compiled by webpack at build time to generate HTML, JavaScript, and CSS files that the browser can work with.
+
+This compilation comes for free, already configured for us when we start the project with the CLI. This all makes using single-file components a no-brainer when building full-featured web applications with Vue.
+
+So we'll be using single- file components throughout our course. And you may remember that this is what our App.vue component looks like that was generated by the CLI.
+
+The App.vue component is a single-file component and so is the HelloWorld component that the CLI created that we renamed to our HomePage component.
+
+
