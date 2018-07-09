@@ -337,3 +337,44 @@ RobotBuilder.vue
     }
   };
 </script>
+
+
+--> 3.5 - Binding to Events with v-on
+
+
+In order to react to actions by the user such as clicking on these buttons, we need to bind to the events of those elements.
+v-on -> It is used bind events.
+
+v-on:click="functionToBeCalled"
+
+click is the event type
+
+
+
+"" -> Here is where the expression are
+
+And that function needs to exist on our component. To do that, we're going to introduce a new property on our component called methods, and that's an object, and then you define each of the functions inside of here that you're going to call from your template.
+methods -> it is another section which will be used to store every function used in this template.
+
+
+  export default {
+    name: 'RobotBuilder',
+    data() {
+      return {
+        availableParts,
+        selectedHeadIndex: 0,
+        selectedLeftArmIndex: 0,
+        selectedTorsoIndex: 0,
+        selectedRightArmIndex: 0,
+        selectedBaseIndex: 0,
+      };
+    },
+    methods: {
+      selectNextHead() {
+        this.selectedHeadIndex = getNextValidIndex(this.selectedHeadIndex, availableParts.heads.length);
+      },
+      selectPreviousHead() {
+        this.selectedHeadIndex = getPrevieousValidIndex(this.selectedHeadIndex, availableParts.heads.length);
+      }
+    }
+  }
