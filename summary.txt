@@ -637,3 +637,14 @@ It will be merged in to any component that use it.
 
 
 You can use a mixin to share any component option across multiple components including lifecycle hooks, props, computed properties, etc.
+
+
+3.18 - Summary
+
+Creating Components
+Using Bindings to Display Data and Handle Events
+Conditionally Displaying Elements with v-if and v-show
+Repeating ELements with v-for
+Styling Components
+Working with Compoment Lifecycle Hooks
+Reducing Duplication with Mixins
