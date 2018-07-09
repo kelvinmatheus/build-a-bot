@@ -567,3 +567,19 @@ Start with the class of the root element and them add  deep selector (>>>) + the
     </div>
   </div
 </template>
+
+3.13 - Conditionally Applying Styles with Style Bindings
+
+Sometimes we want to apply a style to an element based upon a certain condition. That's quite easy to do with Vue. Let's use a style binding to make it so that the border around the head turns red if it's on sale. So over here in our template, we're going to style this div right here. It's the one that contains the head. So a style binding looks like this. And really, this is just binding to the style attribute. And you provide an object, and we're going to set the border to a 3px solid red border. And this should be working, if we go over here and take a look at it. However, it's not yet conditional. So every head has a red border, not just the ones that are on sale. So we'll get to conditional in just a second, but first I want to mention that there are some CSS attributes that have hyphens in them. For example, background-color. But this isn't valid JavaScript. For this to be valid JavaScript, you have to add brackets around this because this is object notation here. But Vue actually makes this easier by allowing you to use camel case for CSS attribute names that have hyphens in them, so just keep that in mind. We don't need this though, so we'll just change this back to border. So for this to be conditional, we need to not just have it be hardcoded to a string, so we can just change that to bind to a computer property on the component. So instead of this object here, we're just going to bind this to headBorderStyle. Now the style binding will be set to whatever object is returned by headBorderStyle. So let's go add a computed property for that. So that's a method, and it's just going to, for now we'll have it just return border, and we'll hardcode that again to 3px solid red. Okay, so this still isn't dynamic. We still are just getting a red border on everything. But now, because this is a computed property, we could just use a ternary here. So let's bring this down onto a separate line, and instead of always setting border to this string, we'll set it to a ternary statement. We'll say if this.selectedRobot.head is onSale, then return 3px solid red. Otherwise, return 3px solid gray. Okay, let's go check that out. Okay, it looks like this is working great now. So now only the items that's on sale has a red border. Okay, one last thing to be aware of is up here in our style binding, sometimes it's necessary to apply styles based on multiple calculations. In that case, we could add an array, or bind this to an array instead. And this could be a second calculated property so that it applies these styles, the headBorderStyle first, and then moreStyles second. And moreStyles will override headBorderStyle, so the second one overrides the first if there are any conflicts. We don't have a need for that, though, so we'll just go with the simple object syntax. Of course, it's better to use classes than inline styles, so now let's take a look at how to conditionally apply CSS classes.
+
+Bind style
+:style="{ border: '3px solid red'; }"
+:style="{ [background-color]: red }"
+:style="{ backgroundColor: red }" ->  Vue syntax with camelcase
+
+It is needed to add square brackets when use css attributes has hyphen because it is object notation.
+
+Vue makes it easier by allowing camelcase syntax
+
+
+:style="[headBorderStyle, otherComputedStyle]"
