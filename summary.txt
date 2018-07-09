@@ -609,3 +609,18 @@ And since the built-in web pack config is already set up to handle the Sass load
 Now just need to add the language scss the the style tag which you want to use the SCSS preprocessor.
 
 <style lang="scss" scoped>
+
+
+3.16 - Using Component Lifecycle Hooks
+       There are several lifecycle hooks that we can tap into to take an action based on the various lifecycle states of a component. Let's take a look at the created lifecycle hook. A typical use case for lifecycle hooks is to fetch data from a API when a component is first created, but we're not ready to do that just yet. We'll implement that exact use case later in the module about state management when we start using an API. For now, let's just make it so that whenever this RobotBuilder component is created, we log something into the console. So all we need to do is add a created function like this. And then we can just console.log in here. And tapping into a lifecyle hook is that easy. Let's go check this out over in our browser. So let's open our console and clear it, and then I'm going to refresh this. And when this page loaded, the RobotBuilder component was created. And then you can see down here we got this component created message. And again, this isn't a great use case, obviously, but it's pretty common that you'll do things in here like fetch data from an API that's needed for this component. There are a handful of lifecycle hooks, but covering all of them is beyond the scope of this course. If you want to explore more about lifecyle hooks, you can check it out here in the Vue documentation. They provide this lifecyle diagram that shows all of the different lifecycle hooks, beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, and beforeDestroy, and finally, destroyed. And it shows you in this diagram here where in the lifecycle of a component each of these hooks gets called. And again, we'll touch on this more later in the course. If you want to look at it right now, to explore lifecycle states further, you can check it out in the Passing Data to Parent Components clip, which is inside the Enabling Intercomponent Communication module, or you can also look at it in the State Management module when we start talking about making API calls. For now, let's move on and take a look at mixins.
+
+
+lifecycle hooks
+
+There are several lifecycle hooks that we can tap into to take an action based on the various lifecycle states of a component. Let's take a look at the created lifecycle hook.
+A typical use case for lifecycle hooks is to fetch data from a API when a component is first created.
+
+To use the created lifecycle hook just add it to the export default object:
+
+created() {
+}
