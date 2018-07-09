@@ -504,3 +504,38 @@ key="index" -> here, index is only a string.
 
 # This is just a performance warning that you'll see in the Vue docs
 For performance, you should not use v-if and v-for in the same element
+
+3.11 - Styling Components
+
+# So this index.html file is what is actually loaded when our app first loads
+index.html
+
+# So we just essentially scoped all of the styles inside this style element to only this App (to the specific component) component.
+<style scoped>
+</style>
+
+This
+<header data-v-7ba5bd90>
+ ...
+</header>
+
+# It will only apply this header to the one that has this data-v attribute data-v-7ba5bd90
+header[data-v-7ba5bd90] {
+    background-color: #999;
+    width: 1084px;
+    margin: 0 auto;
+}
+
+
+# So that's how Vue handles scoping styles. It puts these randomized hashes on scoped elements and then targets them specifically with that hash. So a header element on another component would either not have this data attribute at all, or it would have a different data attribute because it's in a different scope. And the same concept applies to child components, as we'll see in the next clip. With some exceptions, if you add the scoped element to a parent component, its styles won't bleed into the child component.
+
+
+# So about scoped versus global styles.
+
+The App.vue file is the best file to have a Global style
+<style>
+
+</style>
+
+<style scoped>
+</style>
