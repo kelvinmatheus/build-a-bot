@@ -243,3 +243,12 @@ So we'll be using single- file components throughout our course. And you may rem
 The App.vue component is a single-file component and so is the HelloWorld component that the CLI created that we renamed to our HomePage component.
 
 
+--> 3.3 - Creating your first component
+
+A new page means a new view component.
+
+Do not put components directly inside the components folder. It will no scale very well when the application becomes larger.
+
+Structure your app by feature areas.
+
+Create a new 'home' folder
