@@ -423,3 +423,27 @@ So this is better, and while this one just helps simplify our template a little 
 data() attributes
 computed functions
 method functions
+
+3.8 - Displaying Data with Interpolation
+
+
+      Our robot builder is looking pretty good, and we've learned how to bind to attributes and events, but we haven't yet learned how to simply just display raw data on the page. We do that with interpolation. To demonstrate that, let's display the name of our robot just above the robot head. If we take a look at the parts data over here, you can see that each part has a title. And the names of the heads actually make for a pretty good name for our robots. So let's display the name of the currently selected head above our robot. Because of our computed property, this is going to be really easy. So let's add a new div right here, and we'll give it a class of robot-name. And let's add that class down here in our styles. And I'm going to position this absolute. And I want to position it about 25 pixels above the top of the head, and then we'll align the text to the center, and then we'll set the width to 100%. Okay, now for the interpolation part. Back up here inside our div, we're just going to add an expression like this.
+
+      So the double brackets is used for interpolation, and inside there, we'll just put an expression. So we just want to use selectedRobot.head.title. And this is it. That's all there is to interpolation, and you can put any valid expression in here. Although, again, it's recommended that you only use simple expressions in your template. Okay, let's go check this out. All right, awesome, you can see here that our robot has a name, and then you can see, as I click through the robot heads, that the robot name up here is changing due to that interpolation expression. So interpolation is really simple. Before we wrap up on interpolation though, let me mention one more performance option. We can add a v-once tag to any element like this, and when you do this, any bindings inside that element will be evaluated once and then never again. This is handy for performance reasons if you have a page with a lot of bindings that are going to render once and then you don't expect the data to change. In our case though, this isn't what we want. If I come over now to our robot builder and cycle through the robot heads, you can see that the binding isn't updated. It updated once when the page was rendered, and then it's not being updated anymore. So we don't want that here, so let's remove it. But it's good to know about for performance reasons. Now that should be updating again. Okay, cool. So next, we're going to take a look at ways to dynamically show and hide our content on our page.
+
+# So the double brackets is used for interpolation, and inside there, we'll just put an expression. So we just want to use selectedRobot.head.title. And this is it. That's all there is to interpolation, and you can put any valid expression in here. Although, again, it's recommended that you only use simple expressions in your template.
+{{}}
+<div class="robot-name">{{selectedRobot.head.title}}</div>
+
+# Add v-once tag to any element like this, and when you do this, any bindings inside that element will be evaluated once and then never again.
+# This is handy for performance reasons if you have a page with a lot of bindings that are going to render once and then you don't expect the data to change.
+v-once
+<div v-once class="robot-name">{{selectedRobot.head.title}}</div>
+
+
+#### Performance tips
+
+computed function
+v-once
+
+####
