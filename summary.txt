@@ -539,3 +539,31 @@ The App.vue file is the best file to have a Global style
 
 <style scoped>
 </style>
+
+
+3.12 - Styling Child Components
+
+# If you want to be able to do deep targeting like this, you need to use the deep selector that looks like this. And now if we take a look at it, there, now you can see that we can target it. So you can target child elements within scoped styles like this by starting with the class of the root element and then using the deep selector to select other items within the child component. But you need to be aware that this deep component is truly deep. It is not just the child component, but this will also affect child components of your child component, so it will keep going down the chain. And it's possible that this won't work with some CSS preprocessors, and so in that case, there is also the deep selector, and that has the same effect. Okay, we don't want to keep this here, so let's delete that. That covers everything for styling child components. Next, let's take a look at conditionally applying styles to elements.
+
+How to style child components from a scoped parent style.
+
+Start with the class of the root element and them add  deep selector (>>>) + the class that you want to edit.
+
+# parent scoped style
+
+>>> -> Deep selector -> Obs> it cannot work in some preprocessor so, use the /deep/ selector instead. It has the same meaning.
+.content >>> .robot-name {
+  ...
+}
+
+# child
+<template>
+  <div class="content">
+    <div class="top-row">
+      <div class="top part">
+        <div class="robot-name">
+        </div>
+      </div>
+    </div>
+  </div
+</template>
