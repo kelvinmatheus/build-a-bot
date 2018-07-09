@@ -648,3 +648,32 @@ Repeating ELements with v-for
 Styling Components
 Working with Compoment Lifecycle Hooks
 Reducing Duplication with Mixins
+
+
+-> 4 - Enabling Inter-component Communication
+
+4.1 - Introduction
+
+Using Props to Share Data with Child Components
+Validating Component Props
+Passing Data to Parent Components with Events
+Injecting Conent into a Child Componet with Slots
+￼
+
+￼
+
+￼
+
+￼
+
+￼
+
+￼
+
+￼
+
+￼
+
+￼
+
+
