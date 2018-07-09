@@ -583,3 +583,11 @@ Vue makes it easier by allowing camelcase syntax
 
 
 :style="[headBorderStyle, otherComputedStyle]"
+
+
+ :class="{ 'sale-border': selectedRobot.head.onSale }"
+
+ But it is better to put this logic inside the computed property
+
+# saleBorderClass -> it returns a string class
+<div class="top part" :class="[saleBorderClass]">
