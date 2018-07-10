@@ -939,3 +939,55 @@ components: { PartSelector: PartSelector, CollapisibleSection },
 </CollapsibleSection>
 
 are equivalent. I test it and both of them worked. Recheck it when you can.
+
+
+-> 5 -  Routing from Page to Page
+
+
+5.1 - Introduction
+
+All modern front-end frameworks provide some sort of routing mechanism for defining routes and navigating between pages in your single-page app. Vue.js, of course, is no different. In this module, we'll explore how to do this with Vue.
+
+This will include
+
+Adding routing to our app
+Linking to routed pages
+Styling links based on the active route
+Navigating from code
+Working with route params
+Using nested routes
+Using named views
+Enabling HTML5 History Mode, and
+Preventing navigation with navigation guards.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
