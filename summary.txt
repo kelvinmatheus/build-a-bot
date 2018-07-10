@@ -730,3 +730,161 @@ props: {
     }
   }
 },
+
+
+--> 4.5 - Passing Data to Parent Components with Events
+
+          We now have a fully functioning PartSelector, and we're passing data from our RobotBuilder down to the PartSelector via its props. However, notice when I click this Add to Cart button that I'm getting weird results down here in the cart. This is because our RobotBuilder, which is the parent component, isn't aware of changes that are happening inside the PartSelectors, which are child components of the RobotBuilder.
+
+           If we look at the code, you can see that the Add to Cart method expects there to be a selectedRobot, and in our data function up here, you can see that we are initializing each of the parts in that selectedRobot to an empty object. And before we extracted the PartSelector component, each of these parts was getting updated whenever the user selected a new part, but now that selection is happening inside our PartSelector child components. So when we click on each of these buttons, the RobotBuilder has no idea that anything has changed because these buttons are inside the PartSelector component.
+
+           So we need a way to tell our parent component when a different part is selected. Let's take a look at how to create events in the child component that the parent component can bind to.
+
+
+           This will allow the parent component to react to changes in its child components, and it will allow us to pass data back to the parent component from the child component. So over here in our PartSelector component, down here in the methods, you can see that we have these two methods, selectNextPart and selectPreviousPart. We want both of these to emit an event that parent components can listen to by binding to them.
+
+
+           This is surprisingly simple with Vue. Each Vue component has an emit function available that we can call to emit an event.
+
+           So right here in the selectPreviousPart function, down here at the bottom, I'm just going to call this.emit, and then I'm just going to pass in the name of the event that we want to emit. So let's emit the event partSelected.
+
+           This now means that a parent component can bind to a partSelected event when it creates the PartSelector component. We'll see how to do that in just a sec. First, when we emit this event, we want to be able to pass along some data with it. It won't do us much good to let the robot builder know that a part was selected if we don't tell it which part was selected, so let's pass along the currently selected part like this. Remember, we have a computed property up here on our component called selectedPart so we're just using that here to pass it along. All right, and we're going to also want to emit that inside the selectNextPart function, so let's copy this and paste it here. Okay, cool. Now let's go see how to bind to this in the parent component. So over here in our RobotBuilder, up here we have our PartSelectors, and we'll start with this one here. We just want to bind to this new partSelected event.
+
+
+           Binding to a component's event is done the exact same way you bind to any other element's event, with the v-on syntax or the at shorthand syntax. So we're going to bind to partSelected, and then we could bind that to a method on our component like this, but actually, I think that this is going to be simple enough. I just want to handle it inline like this.
+
+           So this is a function that takes in a part. And then this is the PartSelector for the robot head, and so I want to set the selectedRobot's head to this part, so we'll do that like this. So remember, the selectedRobot is an object that we already have on our component, and we're just setting the head to this part that's being passed in. And that's it, easy peasy. All you have to do to pass data to a parent is emit an event in the child component and then bind to it like this. So let's go ahead and do this for the other PartSelectors. So this is the left arm, this is the torso, this is the right arm, and this is the base. Okay, so that's it; the RobotBuilder is now aware of the selected parts because we're binding to the partSelected events and setting the selectedRobot parts. So if we go back over to our browser now and select each of these parts and then click Add to Cart, you can see that that works just fine because the RobotBuilder is now aware of the data that's being passed back to it. But actually, we still have a small problem here. If I refresh this page and then click this Add to Cart button without changing anything, you can see that we're still getting our broken state. So it doesn't work when the page first loads, but if I change all of the parts and then click Add to Cart, you can see that it works just fine. This actually makes sense when you remember how we implemented the events. If we go back over to our PartSelector, you can see that we only emit the events when the selectNextPart or selectPreviousPart functions are called, and these are only called when the user clicks the buttons. So when the page first loads, the PartSelectors haven't emitted these events yet, and so the RobotBuilder doesn't have any selected parts. This is actually a great opportunity to tap into a component lifecyle method. So let's add a created function, and then let's emit the partSelected event when the component is first created. But instead of copying this line again, let's create a new function called emitSelectedPart, and then we will move this up into here, and then right here, we can just call this.emitSelectedPart. And then we'll do the same thing down here. And then in our created event, we'll also call it here. So now the currently selected part will get emitted when this component is created, in addition to when clicking the buttons. And you can see up here that in our data function, we initialize the selectedPartIndex to 0, so when the selectedPart component is created, the first part in the list of parts that's passed in is always the selected part. So we have a default selected part that will get emitted whenever this component is first created. So now if we go over to our page here and refresh, you can see that I'm not going to change any of these parts, and I'm going to go ahead and click Add to Cart, and now it's working just fine because those events got emitted. So this is working great, but it's a little bit hard to see the events as they flow in as we click on the buttons because we don't see that the events are working until we click the Add to Cart button. For that reason, in order to see this a little bit better, let's add a little preview image up here above this Add to Cart button that shows a preview of what our currently selected robot looks like. And as the events are emitted from the child components, you'll see the parent component changing. So we'll grab the HTML for that preview element over here in our GitHub repo. In src, build there is this RobotBuilder-preview.html, so let's grab that. And then we'll come back to our RobotBuilder, and right here at the top of the template inside the content div just above the Add to Cart button, we'll add that here. And then there's some styles for this too, so let's go grab those, so that's this RobotBuilder-preview.css. So let's copy that, and then back over here we'll just drop those in the bottom of our style section. Okay, let's go take a look at that and see what we've got. Okay, so you can see our preview is showing up here, so that's great, but the Add to Cart button is on top of it, so let's go fix that. So over here in our template, let's move our button into our new preview section. We'll just move that up here. And then down here in the CSS, we just need to find the Add to Cart style, and we'll no longer need this right position, and we want to change the width a little bit to just 210 pixels. Now let's go take a look at that. Okay, there we go. Now the Add to Cart button's below, and there's our preview image. And now that we have that preview image, we can see the events coming in as we change them by clicking the parts here. And you can see that the preview image, which is on the parent component, is changing as we change the parts in the child component. Okay, this is awesome, and this is a great example of how to emit events from child components to pass data back to parent components. Now I just want to take a short detour here to talk again about lifecycle hooks because we have a great use case now. If we go back and look at our PartSelector component, you can see that right here we are emitting the selected part in the created lifecycle hook. And then down here in the selectNextPart and selectPreviousPart methods, we are emitting it again. We could simply this a little bit by using the updated lifecycle hook, and that is called whenever the data for the component is updated. So let's change this created hook to an updated hook, and then let's come down here and just delete these so that they're not emitted. These aren't going to be necessary because when we click the buttons, we end up changing the data, and because the data is changed, the updated lifecycle hook will get called and emit our selected part. So now if we come back here, you can see that our data is not being updated, but if I click this, then updated is being called, but this isn't quite what I want because we started out with it blank. And so we actually need both updated and created. We need those both to called emitSelectedPart. So now if I refresh, now as I change the parts, then you can see that the preview looks accurate. Cool. I just wanted to take that little detour to show you how lifecycle hooks work now that we had a better use case. And this is awesome. Now we've seen how to pass data to parent components with events, and we learned a little bit more about lifecycle hooks in the process. Next, let's learn how to inject HTML or Vue content into a component.
+
+
+
+We now have a fully functioning PartSelector, and we're passing data from our RobotBuilder down to the PartSelector via its props. However, notice when I click this Add to Cart button that I'm getting weird results down here in the cart. This is because our RobotBuilder, which is the parent component, isn't aware of changes that are happening inside the PartSelectors, which are child components of the RobotBuilder
+
+# How to create events in the child component that the parent component can bind to.
+# Each Vue component has an emit function available that we can call to emit an event.
+
+
+# This now means that a parent component can bind to a partSelected event when it creates the PartSelector component.
+selectPreviousPart() {
+  this.selectedPartIndex = getPreviousValidIndex(
+    this.selectedPartIndex,
+    this.parts.length,
+  );
+  this.$emit('partSelected', this.selectedPart);
+},
+
+
+
+# Binding to a component's event is done the exact same way you bind to any other element's event, with the v-on syntax or the at shorthand syntax.
+
+# This is a function that ta
+
+ So this is a function that takes in a part. And then this is the PartSelector for the robot head
+@partSelected="part => selectedRobot.head=part"
+
+@partSelected -  It the name of the event that we created inside the child component
+part - It is the second param from the $emit function in the child. It will be stored inside the first part variable.
+
+selectedRobot.head - it is a object and its attribute from the parent component
+part - the last part is first part. Now it is being used to store its date inside the parent attribute.
+
+
+# Problem this event is only called when the bottom to change the image is clicked.
+# If we try to add to cart without change any part of the robot. We wil get an error. This is because of the parent which has its values empty initially.
+
+data() {
+  return {
+    availableParts,
+    cart: [],
+    selectedRobot: {
+      head: {},
+      leftArm: {},
+      torso: {},
+      rightArm: {},
+      base: {}
+    },
+  };
+},
+
+
+# SO, now the the Hook Lifecycle comes in. After a child component is created. We need to make sure that the first part is sent back to the parent data.
+That way we won't get an error as its values will be filled with the first part of the robot. To accomplish that, we need to use
+the create Hook in the child as followed.
+
+
+created() {
+  this.emitSelectedPart();
+},
+methods: {
+  emitSelectedPart() {
+    this.$emit('partSelected', this.selectedPart);
+  },
+  selectNextPart() {
+    this.selectedPartIndex = getNextValidIndex(
+      this.selectedPartIndex,
+      this.parts.length,
+    );
+    this.emitSelectedPart();
+  },
+  selectPreviousPart() {
+    this.selectedPartIndex = getPreviousValidIndex(
+      this.selectedPartIndex,
+      this.parts.length,
+    );
+    this.emitSelectedPart();
+  },
+
+},
+
+# So we create an event that emit the event to the parent.
+# Then, them we call this event when button is clicked and the component is created (through the Hook created method)
+# As a result, the parent will know which are the first parts of the robot to be used in the calculation.
+
+---
+
+# Now, notice that can remove the 'this.emitSelectedPart();' from the selectNextPart() and selectPreviousPart() methods
+# because We could simply this a little bit by using the updated lifecycle hook, and that is called whenever the data for the component is updated.
+# As you can see, the selectedPartIndex data is being changed inside the methods selectNextPart() and selectPreviousPart().
+# Consequently, the updated hook will be called.
+
+data() {
+  return { selectedPartIndex: 0 };
+},
+computed: {
+  selectedPart() {
+    return this.parts[this.selectedPartIndex];
+  },
+},
+created() {
+  this.emitSelectedPart();
+},
+updated() {
+  this.emitSelectedPart();
+},
+methods: {
+  emitSelectedPart() {
+    this.$emit('partSelected', this.selectedPart);
+  },
+  selectNextPart() {
+    this.selectedPartIndex = getNextValidIndex(
+      this.selectedPartIndex,
+      this.parts.length,
+    );
+  },
+  selectPreviousPart() {
+    this.selectedPartIndex = getPreviousValidIndex(
+      this.selectedPartIndex,
+      this.parts.length,
+    );
+  },
+},
+
+
+
+
+
+
+
+
+
+
+
