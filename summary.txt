@@ -704,10 +704,29 @@ position is a no binding attribute.
 # that store strings of variables passed by its parents.
 ￼
 
-￼
+￼--> 4.4 - Validating Props
+           Our PartSelector component now takes in two props, parts and position, but there are no restrictions on the type of data or values that could be passed in to these props. We'd like to provide some validation to prevent parent components from passing in bad data. That's actually quite easy to do with a little different syntax. Let's start by requiring the parts prop to be an array and the position prop to be a string. So instead of using an array here, we'll use a keyed object where the keys are the names of the props, and the values are objects that specify validation information. So for the parts prop, we expect its type to be an array, and for position we expect its type to be a string. And now that we have these in place, if we come back over to our RobotBuilder, and on one of these, instead of passing in an array for the parts, we'll just pass in a string. And now if we come back over here, obviously, our left arm selector isn't going to be working because it's a string, not an array of parts. But if we take a look in our browser, you can see that we have a validation message here because we passed in an invalid data type for the parts. And you can see right here it says Expected Array but got String. So we now have type checking that can help us identify problems during development. So let's go back and fix that. And then we can also make our props required. So here I'm going to, in addition in to specifying type, specify required: true, and then we'll do that for position, too, because it's also required. And now over here in our RobotBuilder, let's not pass in the left position. So if we come back over here, let's clear this and refresh. Well, you might be surprised to see here that there is no message. There's no validation error, and that's because, if we look at what we passed in, we didn't pass in nothing. We actually passed in an empty string. And so because we are providing a value for a position, it's not triggering the validation message. If we remove this altogether, however, and come back over here, there, now you can see it's saying that there is a required prop that's missing. But what if we actually do want to ensure that users cannot pass in an empty string here? Essentially, we want to indicate what are the valid values for position? So we can do that with a validator function. So in addition to specifying that position is required, we're going to supply a validator function, and that is a function that takes in the value that's being passed in to the prop. And we just want to ensure that it is one of these values, left, right, top, bottom, or center. So basically, I just want to make sure that the value is included in that array, or that this array includes the values that's passed in. Okay, now because we are passing in an empty string, we should now be seeing an error over here, and sure enough, if we refresh here, you can see that we are getting an error that the custom validator failed for prop position. Cool, so let's go back to our RobotBuilder and pass position back in here, and then if I clear this and refresh, you can see we're not getting that error anymore. And our RobotBuilder looks great. So awesome, we're now validating the props that being passed into our child component. Next, we'll take a look at how to pass data back to a parent component from a child component.
 
 ￼
 
 ￼
+Our PartSelector component now takes in two props, parts and position, but there are no restrictions on the type of data or values that could be passed in to these props. We'd like to provide some validation to prevent parent components from passing in bad data.
 
+# Import data without validation
+props: ['parts', 'position']
 
+# Import data with validation. This data start to be required
+# The required does not make the an empty string to trigger an error.
+props: {
+  parts: {
+    type: Array,
+    required: true
+  },
+  position: {
+    type: String,
+    required: true ,
+    validator: function(value) {
+      return ['left', 'right', 'top', 'bottom', 'center'].includes(value)
+    }
+  }
+},
