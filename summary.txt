@@ -882,9 +882,60 @@ methods: {
 
 
 
+--> 4.6 - Injecting Content into a Child Component with Slots
+Sometimes you want to create a component that you can pass content into and have it be displayed in the appropriate place within that component. Imagine, for example, a component that is used as a collapsible drawer that expands and collapses as you click on a header, showing and hiding its content when clicked. In that case, you want a component to be reusable so that you can just wrap some part of your template in a collapsible component and it shows and hides that content. To experiment with this, we'll do just that; let's create a collapsible component that we can use to show and hide this preview image over here. And so over in our RobotBuilder, we want to be able to use it like this. So around this preview content, I want to have a CollapsibleSection component, and I'll wrap all of this content, the preview image but not the Add to Cart button, in that CollapsibleSection component. And then basically, this CollapsibleSection component will have a header that says expand and collapse, and when we click on it, it will show and hide this content. So let's go create this component. And I'm going to put that in a shared folder, since this is likely to be used by other components. And in there, I'll create a new file, CollapsibleSection.vue. And the template for this will be really simple, so I'll just type that in. So here's the template section of our component, and it's going to have an outer div, and then it's going to have an inner div that is the header, so we'll give it a header class. And then it's going to have a couple of spans in here, and those spans will say Collapse and Expand. And these are going to be shown or hidden based on whether the CollapsibleSection is currently open or not, so we will add a v-if, and we'll say if it's open, then show Collapse. And down here, if it is not open, then show Expand. And then on each of these spans we're going to bind to a click event, and we will just toggle open to not open, and we'll do that for both of these. And then I just want a down and up arrow here, so I'm going to add these Unicode characters. So that is an up arrow, and then we want a down arrow here. Okay, so there's our header, and then basically we want to be able to add right here our togglable content here. So this is where we want our injected content to appear, so we'll come back to that in a second. First, let's add our script block. And we're going to export our component definition object, and this component will be named CollapsibleSection. And it will have a data object which has the open variable that we're toggling with our click handlers up above. So our data object will just return a new object with open set to true by default. Okay, and that's it for the component script, and then we just need a few styles here, and we'll have those be scoped as always. And we just need to style our header, and I wanted it have a background-color of gray and a little bit of padding. And we want it to have a pointer cursor. Okay, so now we have a component that has a header, and when we click on it, it toggles the open flag between true and false. Now we just need to know how to display injected content right here where we want our togglable content. For that, we use slots like this. So this slot element is a Vue-specific thing, and now that we've added it here, when we create a CollapsibleSection element like we have over in our RobotBuilder over here, this content that we put inside of our CollapsibleSection will be shown right here where this slot element is. It's really that simple. Of course, since this is a collapsible section, we want to hide this slot when it's not open, so we'll put a v-if on here and only show it when open is true. Okay, so if we go back to our RobotBuilder component and we want to import this, and it looks like I must've missed something here. Yep, this CollapsibleSection needs to go down here actually. You may have already noticed that when I did it before. Okay, so if we come down here now and import our new CollapsibleSection component, so I'm going to import CollapsibleSection from ../shared/CollapsibleSection.vue, and then we can use this down here in our components. Now that is available to be used. And so now, this CollapsibleSection component should be working. Let's go take a look at that. There we go. Now you can see that we have a header here above our preview, and actually that's now working. I must've got my click handler wrong. Oh, yep, here I meant this to be equals not open. So basically, clicking on these spans will toggle the open variable. So now let's come back over here. And when I collapse this, there we go, so our collapsible content is working, and you can see how we injected content into our collapsible content using a slot. And then one last thing to be aware of, this may be a little less common, is the concept of default content for a slot. So in our CollapsibleSection, inside this slot element, I can provide any content that I want, so I could say here, div DefaultContent. And then this this will be displayed if no content is passed in. So let's add another CollapsibleSection here just above this one, and we won't provide any content for that. And now if we come over here, you can see that we have DefaultContent here instead of any data that was passed in because we didn't pass in any content here. And as soon as I pass in something here, then that will show instead of the default content. And that's all there is to working with slots. I'm going to go ahead and delete this. And that wraps up this module on inter-component communication.
 
 
+# Sometimes you want to create a component that you can pass content into and have it be displayed in the appropriate place within that component.
+
+# When you use a component tag with content inside. This content will be injected in a component tag called slot as followed:
+
+RobotBuilder.vue
+<CollapsibleSection>
+  <div class="preview-content">
+    <div class="top-row">
+      <img :src="selectedRobot.head.src"/>
+    </div>
+    <div class="middle-row">
+      <img :src="selectedRobot.leftArm.src" class="rotate-left"/>
+      <img :src="selectedRobot.torso.src"/>
+      <img :src="selectedRobot.rightArm.src" class="rotate-right"/>
+    </div>
+    <div class="bottom-row">
+      <img :src="selectedRobot.base.src"/>
+    </div>
+  </div>
+</CollapsibleSection>
 
 
+---
+CollapsibleSection.vue
+<template>
+  <div>
+    <div class="header">
+      <span v-if="open" @click="open != open">&#x25b2; Collapse</span>
+      <span v-if="!open" @click="open != open">&#x25BC; Expand</span>
+    </div>
+    <!-- Toggleable -->
+    <slot>
+
+    </slot>
+  </div>
+</template>
 
 
+Ways to import a component
+components: { PartSelector: PartSelector, CollapisibleSection },
+
+# If not content is sent to the slot, it will use its content to display something.
+ <!-- Toggleable -->
+<slot v-if="open">
+  <div>DefaultContent</div>
+</slot>
+
+<CollapsibleSection /> and
+
+<CollapsibleSection>
+</CollapsibleSection>
+
+are equivalent. I test it and both of them worked. Recheck it when you can.
