@@ -1224,3 +1224,71 @@ showPartInfo() {
 </router-link>
 
 <img @click="showPartInfo" :src="selectedPart.src" title="arm"/>
+
+
+-> 5.7 - Passing Params as Props
+         One downside of using this route expression is that it couples this component to the router. What if we wanted to use this component as a child component somewhere else and pass the partType and id as props instead of pulling it off of the route params? Well, we can make this work both as a routed component and as a child component by updating the route for this component to pass the params as props.
+
+         So we can do that over in the route simply by setting the props property to true on this route. So now Vue will pass the route params that it identifies on the path for this route as props instead of as route params. And with that simple change, we can come over to our PartInfo component and add props for the partType and id, and now instead of getting partType and id off of this.route.params, we can just get it off of this, which is where the props are. And it's that easy to decouple our component from the route. You can see over here that that is still working just fine. But let's add a little bit of validation to these props. So we'll change the props to an object, and it will have a partType, and we want it to be of type: String, and it will have an id, which will be of type: Number. But the problem with this is that when this component is used as a routed component, this id will still be passed in as a string, so we need to allow either a number or a string. But just to be sure that nobody passes in an invalid value here, let's also add a validator. And then we'll just verify that this is a number, so we'll call Number.isInteger, and then we will cast the value to a Number. Okay, so now we have some validation around our props, and if we come back over here, this should all still be working just fine. Great, now we know how to use route params and how to pass those parameters in as props. Now let's explore nested routes.
+
+
+# One downside of using this route expression is that it couples this component to the router.
+# What if we wanted to use this component as a child component somewhere else and pass the partType and id as props instead of pulling it off of the route params?
+
+# So we can do that over in the route simply by setting the props property to true on this route.
+
+export default new Router({
+  routes: [{
+    path: '/',
+    name: 'Home',
+    component: HomePage
+  }, {
+    path: '/build',
+    name: 'Build',
+    component: RobotBuilder
+  }, {
+    path: '/parts/:partType/:id',
+    name: 'Parts',
+    component: PartInfo,
+    props: true
+  }],
+});
+
+
+Then you just need to get this data from the props
+
+<script>
+  import parts from '../data/parts';
+
+  export default {
+    name: 'PartInfo',
+    props: ['partType', 'id'], # here <--------
+    computed: {
+      part() {
+        # const { partType, id }  = this.$route.params; # Not need anymore
+        const { partType, id }  = this
+
+        return parts[partType].find(part => part.id === +id);
+      }
+    },
+  }
+</script>
+
+
+# Now add validation to the props
+# But just to be sure that nobody passes in an invalid value here, let's also add a validator. And then we'll just verify that this is a number, so we'll call Number.isInteger, and then we will cast the value to a Number.
+
+props: {
+  partType: { type: String },
+  id: {
+    type: [Number, String],
+    validator(value) {
+      return Number.isInteger(Number(value))
+    }
+  }
+},
+
+Cast a string as a number???
+
+Number(value)
++value
