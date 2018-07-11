@@ -1341,3 +1341,43 @@ export default new Router({
     props: true
   }],
 });
+
+
+--> 5.9 - Using Named Views
+          We just looked at nested child routes; now let's take a look at named views. You can almost think of named views as sibling routes. Whereas nested routes have a parent-child relationship, named views allow you to have multiple router-views on a single component, and the route for the component specifies which two or more views to display. To demonstrate that, let's add a sidebar to our app that will show up here on the left of every page. And each route in our app will be able to specify a different sidebar to display. Right now in our App component we have this main section down here that as a router-view in it. Let's also add an aside that we'll show to the left of this main section. So we'll give that a class of aside. And we'll wrap both of these in a container div. And let's go ahead and add those classes, so we have a container, and it's going to be display: flex with a margin of 10px auto 0 auto. And we will set justify-content to center. And then we need an aside class, and it's going to have a 30-pixel padding a background-color that is gray, 100-pixel width, and a min-height of 300 pixels, which matches the min-height of our main content area. Okay, as we add these asides to our site, we're going to have to make a couple of other small CSS adjustments in order to fit those in. So on our main element we're going to remove the margin auto, and we're going to change its width to 964 pixels. And then we're going to change the width of the header to 1184 pixels. Okay, that should take care of the styling. So now up here in the aside, we'll go ahead and add another router-view. However, so that we can target this router-view, let's give it a name. So we're going to add a name attribute, and we will name it sidebar. And we can leave this one without a name. And by default, if we don't give it a name, it has the name default. Okay, now we need some content to display in this sidebar. So let's create a sidebars folder, and in here, I will create a SidebarStandard component, and I will also create a SidebarBuild component. So the build page will have its own sidebar. And our standard sidebar is just going to look like this. So if you're following along, go ahead and pause this, if you'd like to type it in. And the only content up here is just the text, Standard Sidebar, and we have a sidebar class here that is giving it a font size of 50 pixels and rotating it 90 degrees. And that's really all that's going on here. And then let's copy and paste this into the build sidebar, and we'll just change this to say Build Sidebar, and we will name it Build. And just to make it stand out a little bit, let's give it a green font color. Okay, now let's come over to our routes, and up here on the route for our HomePage, we're going to change this component property to components, plural, and then we'll change that from a simple property to a keyed object. And this will have two properties, default and sidebar. Remember that these names now correspond to the names of our router views. This one has a name of sidebar, and this one has a name of default. So when our home page is displayed, we want the default router-view to display our home page. And then we want the sidebar router-view to display our standard sidebar, and we'll need to import that up here. And then let's do the same thing for our build route, except that the default router-view will display the RobotBuilder, and in this case, we want to display the build sidebar, so let's import that also. Okay, cool. So now because our main App component has two router-views, we have to specify them both, or we can specify them both, and we can indicate in the route which content to display in each one. So let's go take a look at this. And it looks like we have an error in our CSS, so let's go back to our App component, and down here in the styles I'm missing a colon right here it looks like. Okay, let's check this out. Okay, there we go. So we are on the build page and notice that on the build route that I have my robot builder, and I have the green build sidebar. And yet, if I go home, I have a different sidebar. This is the standard sidebar. And notice that if I go to the parts/browse page, that there actually is no sidebar here, or I should say there is no content in that sidebar. So this gray background is coming from the aside in our App component, which exists right here. So we have the aside here, and that has a gray background. But there is no content in it because we didn't give it a router-view on that page. So our route is not specifying a component for the sidebar router-view, and so it's blank. So it is optional to provide data here, but
+
+
+
+# this is how you use named views in order to specify different content for different parts of the same page. Next let's go take a look at how to get rid of this hash sign in our URLs.
+
+
+export default new Router({
+  routes: [{
+    path: '/',
+    name: 'Home',
+    components: {
+      default: HomePage,
+      sidebar: SidebarStandard
+    }
+  }, {
+    path: '/build',
+    name: 'Build',
+    components: {
+      default: RobotBuilder,
+      sidebar: SidebarBuild
+    }
+  },
+}
+
+# Template
+
+router-view without a name is set to default.
+
+<div class="container">
+  <aside class="aside">
+    <router-view name="sidebar"/>
+  </aside>
+  <main>
+    <router-view />
+  </main>
+</div>
