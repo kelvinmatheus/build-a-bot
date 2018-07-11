@@ -1415,3 +1415,47 @@ beforeEnter(to, from, next) {
 
 # It will prevent the page to be loaded if it receive false
 next(isValidId);
+
+
+--> 5.12 - Preventing Navigation Away from Pages with Navigation Guards
+    Sometimes we want to prevent or warn a user before they leave a page. For example, imagine I spent some time configuring the perfect robot that I want here, and then I click the home link up here to navigate away. This could cause me to lose all of my progress on the robot I've built, so I may want to warn the user before they lose their progress.
+
+    Let's create a beforeLeave route guard to handle this. This route guard is going to need some information from the component, so we'll create this one inside of the component rather than on the route like we did with the beforeEnter guard in the last clip. So over here in the RobotBuilder, we're going to add a beforeRouteLeave function right here, and notice that this has the word route in it. Well, it's supposed to. Now it has the word route in it. So this beforeRouteLeave, and we could add a beforeRouteEnter here, but you may remember that when we were adding this on a route as opposed to in a component, we actually didn't have the word route in here. So this is different when you're adding it on a component. So we want a beforeRouteLeave guard, and again, this has the to, from, and next parameters. And basically, we want to warn the user if they try to leave the page without adding the robot to the cart first. So let's add a property in our data function down here that will track whether they've added it to the cart. So we'll create an addedToCart property, and we will default that to false. And now up here in our route guard, we will check to see if that's true, so if this.addedToCart. And if it is true, we will allow them to leave the page. So we'll call next, passing in true, which will allow the navigation. Otherwise, we'll use a confirm dialog to ask them if they want to leave or not. So I'm going to set, I'm going to say const response equals, and then we're going to use confirm, and here we're going to say You have not added your robot to your cart, are you sure you want to leave? So if you're not familiar with confirm, it'll pop up a dialog kind of like an alert, but it has an OK and a cancel button. If they click OK, it returns true. Otherwise, it returns false. So if they click OK, then they're saying that they want to leave, and so we will pass response into next. And this is all we need. However, our linter is getting angry because it doesn't like us using confirm. Generally, alerts and confirms are not a great idea, but this is good for demoing this. And it's not bad to use it in the cases where it makes sense. And we're also getting an error because we're using a global function, so we're just going to disable those alerts here. So I'll just put in these two ESLint directives here, and now it's stopped complaining. There's just one last thing that we need to do here. Remember, we're checking to see if adddedToCart is true, and it's always going to be false right now because that's what we defaulted it to. So down in the addToCart function, once they've added to their cart, then we're going to set this.addedToCart = true. Okay, let's go check this out. So when I first load this page, if I try to navigate away, I should get a warning. There we go. You have not added your robot to your cart. Are you sure that you want to leave? And if I say Cancel, then it does not navigate away, but if I say OK, then it does navigate away, so that's working great. And if we go ahead and configure a robot and add it to our cart, then addedToCart is set to true, and now we can navigate away without a warning. Great, so now we know how to use route guards to prevent users from leaving a page.
+
+
+# Sometimes we want to prevent or warn a user before they leave a page. For example, imagine I spent some time configuring the perfect robot that I want here, and then I click the home link up here to navigate away. This could cause me to lose all of my progress on the robot I've built, so I may want to warn the user before they lose their progress.
+
+
+# beforeRouteLeave function right here, and notice that this has the word route in it. Well, it's supposed to. Now it has the word route in it. So this beforeRouteLeave, and we could add a beforeRouteEnter here, but you may remember that when we were adding this on a route as opposed to in a component, we actually didn't have the word route in here.
+
+
+# And we're also getting an error because we're using a global function
+# [eslint]
+
+/* eslint no-alert: 0 */
+/* eslint no-restricted-globals: 0 */
+<script>
+  import availableParts from '../data/parts';
+  import createHookMixin from './create-hook-mixin';
+  import PartSelector from './PartSelector.vue'
+  import CollapsibleSection from '../shared/CollapsibleSection.vue'
+
+  export default {
+    name: 'RobotBuilder',
+    beforeRouteLeave(to, from, next) {
+      if (this.addedToCart) {
+        next(true)
+      } else {
+        // [eslint] Unexpected us of 'confirm'. (no-restricted-globals)
+        // [eslint] Unexpected confirm. (no-alert)
+        // Fuction confirm(message?: string) boolean.
+
+        /* eslint no-alert: 0 */
+        /* eslint no-restricted-globals: 0 */
+        const response = confirm('You have not added your robot to your cart, are you sure you want to leave?');
+
+        next(response);
+      }
+    },
+  }
+</script>
