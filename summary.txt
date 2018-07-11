@@ -1292,3 +1292,52 @@ Cast a string as a number???
 
 Number(value)
 +value
+
+
+-> 5.8 - Using Nested Routes
+   In order to understand what we're going to build in order to look at nested routes, let's take a look at the final result. So we're going to be building this Browse Parts page, and notice up here the URL is parts/browse. And when we navigate to that, it shows us a list of all the different parts. But then as I click on each of the different part types, you can see that the bottom part of this page here is changing, but this top part that includes this menu is not changing. And notice the URL up here as I click on each of these is also changing. And so the URL is changing, but really all Vue is replacing is this bottom section down here. That is possible because of nested routes, so let's go take a look at how to build this. To get started, we'll create a new BrowseParts component. So I've created that here in the parts folder. Let's go grab the contents from that from our GitHub repo. So in the src folder, in the parts folder, there is the BrowseParts.vue file. So let's grab that and paste that into here. So there's not a lot going on here. We have a bit of CSS, and then up here we have a menu for the different parts. And then I'm going to need a new page for each of the different types of parts, so I'm going to create a new RobotHeads.vue and a new RobotArms component, and a RobotTorsos, and finally a RobotBases. And then I'm going to get the contents for each of these out of our GitHub repo from their corresponding files also. So here's RobotArms, and I'll paste that into RobotArms here, RobotBases, paste that in here, and then RobotHeads, and finally, RobotTorsos. And each one of these is really quite similar where you have a title and a description of the type of parts that we're dealing with on this page. And then you can see here that we have a v-for that is looping over all of the, in this case, all of the arms and displaying the title and description, whereas here, we're looping over bases and torsos and heads. And then in each one, you can see that there is a data function that's returning the corresponding part, so we have a heads property on the RobotHeads component, and we have an arms property on the RobotArms component, etc. So now the trick is how do we get each one of these pages to be viewed on the browse page underneath this menu whenever we click each one of the links for the different part types? Well, it starts with adding another router-view. You'll remember that we have a router-view already in our App component, and so we're adding a second one here. And now we can add routes for each one of these individual pages, RobotArms, RobotBases, etc. This is going to consist of a parent route for the BrowseParts page and child routes for each of the PartTypes. So over here in our routes we're going to create a BrowseParts route, and it's important that this goes above the existing parts route. I'll explain that in a second here. So right here I'm going to create a new route, and it's going to have a path of /parts/browse and a name of BrowseParts. And the component is going to be the BrowseParts component, and we'll need to import that. And that has to have the .vue extension on it. Okay, now back to why it was important where this goes. Notice that this parts path where we're navigating to a particular part that it has parts followed by a partType. Vue has no idea when we type in browse here that we're not trying to type in a partType. And so if we would've put this down below, it would've got picked up first by this route, and so the order is important. Okay, so now we have this BrowseParts route, and we're going to need to add the child routes now for the individual part types. We do that by adding a children array like this. So the BrowseParts route now has child routes, and then we just need to specify the child route for each part type. So we're going to have BrowseHeads, and that's going to have a path of heads, and resolve to the component RobotHeads. And let's copy this and paste it for each of the types. And this one will be BrowseArms, path will be arms. Notice that this path is relative to the browse path, so the full path for arms is parts/browse/arms. And that will use the RobotArms component, and then we have BrowseTorsos, and the RobotTorsos component, and then finally BrowseBases. That's the bases path and the RobotBases component. So now let's go ahead and import each of those. Okay, so now we've created our nested routes, so we have our BrowseParts that has child routes for each one of the parts pages. Now all we have to do is create links for each one of these on the browse page. So back over here in the BrowseParts page, I just need to add a router-link around each one of these menu items. So, have a router-link, and then I'm going to use a to binding, and here I'm just going to specify the name of a route. And notice here that I can just provide the name of the child route. Okay, and let's fix this so that it wraps a little bit better. Okay, now we just want to do a similar thing around the rest of these. Okay, so we should be good to go. So we added a BrowseParts route, and it had child routes, and then we linked to each of the child routes here. Okay, so let's take a look. So instead of build here, we're going to navigate to parts/browse, and here we go. So now I can go to Heads and Arms and Torsos and Bases, and you can see that the data for the correct corresponding parts is loading down below. Awesome. So pretty simple to add child routes. Now let's go take a look at one more place where we can use a router-view, and that's with named views.
+
+# Here order is important as
+
+path: '/parts/browse'
+
+browse would be catch first by the
+
+ {
+    path: '/parts/:partType/:id',
+    name: 'Parts',
+    component: PartInfo,
+    props: true
+  }
+
+If it comes first than
+
+{
+    path: '/parts/browse',
+    name: 'BrowseParts',
+    component: BrowseParts,
+    props: true
+  }
+
+
+export default new Router({
+  routes: [{
+    path: '/',
+    name: 'Home',
+    component: HomePage
+  }, {
+    path: '/build',
+    name: 'Build',
+    component: RobotBuilder
+  }, {
+    path: '/parts/browse',
+    name: 'BrowseParts',
+    component: BrowseParts,
+    props: true
+  }, {
+    path: '/parts/:partType/:id',
+    name: 'Parts',
+    component: PartInfo,
+    props: true
+  }],
+});
