@@ -1659,3 +1659,133 @@ export default new Vuex.Store({
   }
 });
 
+
+--> 6.6 - Using Actions to Work with APIs and Asynchronous Data
+          Everything that we've done so far with Vuex has been synchronous, simply modifying and reading from the local state. But of course, most web applications today deal with asynchronous HTTP calls to fetch and update data from a remote API. With Vuex we can accomplish that with actions.
+
+
+
+          But first, we'll need an API to work with. To make this easy I've already created this API over here. So, let's clone this by copying the remote URL here. And then over here in our bash console I'm going to open a new tab and change directory to where I keep my projects. And then I'm going to go ahead and git clone that. And if you're using this same bash console, you paste by right-clicking. So I'll paste my remote URL in here and go ahead and clone that. Okay, so let's change directory into that new directory. And then I'm just going to do a npm install. Alright, now we can go ahead and start up this server by just saying npm start. Okay, now you can see we have a server listening at port 8081. So if I come back over to my browser and go to localhost port 8081 then I have an endpoint right here that I can hit, api/part. And there we go. So you can see now that this parts endpoint on our new API is returning all of our robot parts data that we previously have had hard decoded in our application. And now it's time to finally start getting this from the real API, so we'll do that with a Vuex action. So, back over in our store let's add an action section. And in here we'll create our first action. We'll call it getParts.
+
+
+
+           But all we really need right now is the commit function so that's all I'm going to deconstruct out of the context object.
+
+
+           The commit function is how we call mutations on the store. You may recall that we're already using the commit function in the RobotBuilder currently to call the addRobotToCart mutation. So, we'll use this commit function here in just a minute. First, we need a way to make HTTP calls. Vue doesn't provide any of its own custom Ajax or data access methods or libraries. Instead, they allow you to use whatever you want to make HTTP calls. So we're going to use Axios, which means we need to install it.
+
+
+
+           So, back over in our console, on the tab that's running our Build-a-Bot app, let's go ahead and stop it. And then I'm going to npm install axios. And we'll save that. Okay, let's go ahead and start our server back up. And then back over in our app, we're going to go ahead and import Axios. And now down in our getParts function I can use Axios to get data. So I'm going to say axios.get. And then the axios.get function takes a URL for the endpoint that you want to hit. But what can we put here? Our API endpoint that we created is right here.
+
+           So we could put http://localhost:8081/api/parts. But, of course, there are a couple of problems with this. First of all, we're going to get CORS issues if we do this because we're accessing a different port than what our application was running under.
+
+           But also, local host is not going to work in production. And in production, this is typically solved by hosting your application and your API on the same domain and port. But we don't have that luxury in development without some effort.
+
+
+           That's not a problem though because Vue provides a way for us to configure a built-in proxy so that we can proxy the API through our dev server that our Vue app is being served from. This will solve our issues locally and enable us to just use a relative URL like this. So, in order for this to work we need to configure the Vue proxy to proxy our API. We can do that by creating a file at the root of our project named vue.config.js. So I'm just going to right-click here and create a new file, vue.config.js.
+
+
+           And then in here we just need to configure the proxy like this. So, we'll do a module.exports and we'll just export an object from here. And in here we'll just provide a devServer configuration. And we'll configure the proxy. And we want our proxy to be running at /api. So now we can configure this API to be proxied to where our server is running. So, the target for API is going to be http://localhost:8081. And then we just specify changeOrigin, and we'll set that to true. So this is actually webpack.config. And Vue, behind the scenes, is using the webpack-dev-server. So that's why we're using webpack.config here. So this is how you configure the webpack-dev-server. So now, we have a proxy running at /api that will proxy all requests from /api to http://localhost, spelled correctly, port 8081. So now this api/parts URL will get proxied to our API that's running on port 8081. So now that that's set up we can continue working on our action. So, when this axios call finishes we want to commit the data to our store. But before we can do that we need to add a default value to our state. So up here I'm going to set parts by default to just null. Remember, anything that you add to your state you need to add here at a default value for it to start with. And, again, when this axios call finishes we want to mutate our state. But we can't do that directly. We do that through mutations. So let's add a mutation next for updateParts. And that takes in state and our parts. And then we'll just set state.parts equal to the parts being passed in here. And I missed a parenthesis up here. Okay. And then notice something interesting with this mutation. ESLint is saying that we're violating the no-param-reassign rule. This rule says that you should never mutate a parameter that is passed in to a function. This helps avoid mutation-related bugs. However, Vue's whole change detection relies on mutations within the store. It's actually intended that you will mutate this state object when it's passed in. So for that reason, let's update our ESLint RC file to allow this. So, here we have our eslintrc.js file. And then right here in rules all we have to do is add another rule for no-param-reassign. And we'll set that to 0. And now ESLint should stop warning us. Yep, sure enough. Looks good now. Okay, so finally back to our action here. When our axios call finishes we want to then commit the data to the store. So, we'll take in our result here from our axios call and then we will call commit that we've de-structured there from our parameters. And we want to commit the updateParts mutation. And then we'll pass in the data that we get back from our API calls. So that will be results.data. So Axios returns a result object and it has a data object that has the payload that was returned. And this should just be result. Okay, cool. And then in the event that an error occurs I'll catch it and then I'll just pass that to console.error. Of course, you might want to do something more useful than this in a real application, but for now I'll just log any errors to the console. Okay, so with all of this in place we use Axios to call our API. And then we commit the returned data to our store through the updateParts mutation. Okay, cool. So now wherever we need this data, we need to first dispatch to this action and then get the parts from the store instead of from the hard-coded parts.json file we're currently using. So, let's start in the RobotBuilder. So, first up here we are importing availableParts from this parts file. So let's delete that. And then in order to kick of the axios call we need to dispatch an action. And then we want to dispatch that action as soon as this component is created. So, let's go ahead and add a created hook. And then in here I'm going to access the store with this.$store. And then there's a new function we haven't used on the store yet and that's called dispatch. And we're just going to tell it to dispatch the getParts action. So you use commit to commit mutations and you use dispatch to kick off actions. And I'm using the wrong get here. So that's getParts. Okay, so that will kick off our axios action, which is asynchronous. And then all we need to do is create a computed property that will return the parts from the store when the axios call is finished. So down here in computed, let's add a new computed property called availableParts. And this will just return this.$store.state.parts. Okay, and then this is just complaining because we have availableParts declared in two places. We don't need it in data anymore since it's now a computed prop. So our created lifecycle hook now dispatches the axios call and then once that's available this computed prop will get updated whenever that data returns. And now up here in our template, in all these places that we're calling availableParts will now get availableParts from the computed property.
+
+           Okay, so this is pretty much it. We've dispatched our call and then we're getting the data off the store after the action in the store has committed the data via a mutation. But we still have one problem. So if we come over here, you can see our build page is not rendering. And if we look in here we have errors. Notice that it says here Cannot read property "heads" of null. So back over here, That's right here. So it's saying that it cannot read property heads of null. So availableParts is null. And that's going to happen everywhere below where we're using availableParts also. Well, that's because over in our store here our default value for parts is null. And so, because our action is asynchronous, when the component first loads the store returns null for availableParts or for this parts property. And we could fix this in two different ways. We could provide an empty object as the default value in our store or we could prevent the RobotBuilder page from rendering until the availableParts is populated. I'm going to go with the later solution because the first solution would have some other cascading problems with an empty object. So, let's just use a v-if on this outer div here. And we will just say v-if, and we will only show this if availableParts is truthy. So this won't render if it's null. So this should be working now. If we come back over here and refresh. Okay, and now we're getting a 404 error, but that's just because when we created our proxy, updated our proxy config, we needed to restart our server. So I'm going to stop my server and start it again. And now let's go ahead and refresh here. There we go. No more errors here. And you can see that we are getting our robot parts just fine. And now it's coming from an API call. So if I look in Network over here and refresh this page, you can see that I made this call to port 8080/api/parts and that got rewritten by our proxy server to port 8081.
+
+           Alright, awesome. So we have now dispatched an action, which kicked off an asynchronous API call and then we're getting that data. Now we just need to update the other places in our app where we were importing that old parts.json file and use the action instead. So, let's start with these four files in the parts folder. So this is for the part info pages that display information about each of the parts. And these four files are very similar. And they're all going to need to dispatch the getParts action. And then they'll each need to have a computer prop to get the parts off the store. And since that will be repeated across all four of these components, let's create a mixin to do it and then we'll reuse it. So, we'll create a new file and we'll name it get-parts-mixin.js. And then this will just export a component options object. And in here we'll add a created hook. And this will dispatch the getParts action. And then we just want a computed prop. And that computed prop will be called parts. And it will return this.$store.state.parts. And this should actually be a colon here. There we go. And actually, I'd like this computed prop to do a little bit more than just this. I'd like to make it so that we don't have to do a v-if check in all of our components while we wait for the parts action to complete. So, we'll return the parts unless it's null. In which case, we'll return a default object. So, that default object will just look like this. It'll have heads, which is an empty array, arms, and torsos, and bases. Okay, so this is dispatching the getParts action and then returning parts from the store or a reasonable default object if the parts are not in the store. Okay, so let's just go use that mixin in each of these components. So, here in the robot arms we'll get rid of this import. And we can delete our data function since our mixin is going to handle that via computed props. And let's go ahead and import our mixin, getPartsMixin from ./get-parts-mixin. Okay. And then our mixin we use down here by specifying mixins and passing that in in the array. Okay, and then up here we just need our v-for to loop over parts.arms instead of just arms. Okay, so now let's do the same thing for RobotBases. Specify the mixin. And then up here this will be parts.bases. And then same thing here in the RobotHeads. And update the for loop. And then finally on RobotTorsos. Update the for loop. There we go. Okay, so now all of these parts components are updated, and you can see how helpful a mixin was in this case. It's made these four components incredibly simple. And actually, we can use that mixin in one more place. This PartInfo component also needs parts. So we can get rid of this import here and import the mixin instead and add mixins. And then down here we just need to change this to this.parts since that's a computer prop now from our mixin. Okay, and that wraps up our changes. So now our whole application is getting parts data from the API via a Vuex action. And that means that we don't need this data folder anymore. Okay, cool. This should all be working now so let's go check it out. So our RobotBuilder page is working. And if I click on one of these parts you can see that this is working looking up the part information. And if I go to the parts/browse then you can see that I'm getting the heads information, arms information, torsos, and bases. Awesome. So that was a fair amount of work to retrofit our application to use the new action and API. But the amount of work that was actually involved in creating the action on our store, which we can see again over here, was not that much work. And accessing it in each of the components wasn't that much work either. Just felt like a lot of work because we were retrofitting a bunch of places. But you can see that creating actions and making asynchronous calls is actually pretty straight forward. So, in the next clip we'll take a look at how to use actions to save data to our API.
+
+
+
+
+
+
+# Everything that we've done so far with Vuex has been synchronous, simply modifying and reading from the local state.
+
+# But of course, most web applications today deal with asynchronous HTTP calls to fetch and update data from a remote API. With Vuex we can accomplish that with actions.
+
+
+
+# Download the API and use install project dependencies and start the server.
+# In an new terminal tab, access the API folder and run the following commands.
+##############################################
+$ npm install
+$ npm start
+##############################################
+#  And the first parameter to an action function is a context object.
+The context exposes several items for working with the state. So instead of passing in this we could actually deconstruct it to grab what we want. It provides things like state, getters, a commit function, and a dispatch function.
+
+
+actions: {
+  getParts(context) {
+
+  },
+},
+
+
+actions: {
+  getParts({ state, getters, commit, dispatch}) {
+
+  },
+},
+
+
+# The commit function is how we call mutations on the store. You may recall that we're already using the commit function in the RobotBuilder currently to call the addRobotToCart mutation.
+
+
+# Vue doesn't provide any of its own custom Ajax or data access methods or libraries. Instead, they allow you to use whatever you want to make HTTP calls. So we're going to use Axios
+$ npm install axios --save
+
+
+actions: {
+  getParts({ state, getters, commit, dispatch}) {
+    axios.get('http://localhost:8018/api/parts');
+  },
+},
+
+
+
+# So we could put http://localhost:8081/api/parts. But, of course, there are a couple of problems with this. First of all, we're going to get CORS issues if we do this because we're accessing a different port than what our application was running under.
+
+# But also, local host is not going to work in production. And in production, this is typically solved by hosting your application and your API on the same domain and port. But we don't have that luxury in development without some effort.
+
+
+#  That's not a problem though because Vue provides a way for us to configure a built-in proxy so that we can proxy the API through our dev server that our Vue app is being served from. This will solve our issues locally and enable us to just use a relative URL like this.
+
+
+# So, in order for this to work we need to configure the Vue proxy to proxy our API. We can do that by creating a file at the root of our project named vue.config.js. And then in here we just need to configure the proxy like this.
+
+
+# [eslint] Assignment to property of function parameter 'state'. (no-param-reassign)
+# This avoid mutation related bugs.
+
+
+axio gets a result object with the payload data that was returned from the request
+
+result.data
+
+# With the config file, you can change the get request from
+
+
+To
+
+  actions: {
+    getParts({ state, getters, commit, dispatch}) {
+      axios.get('/api/parts');
+    },
+  },
+
+
+  actions: {
+    getParts({ state, getters, commit, dispatch}) {
+      axios.get('/api/parts')
+        .then(result => commit('updateParts', result.data))
+        .catch(console.error);
+    },
+  },
+
+
+  catch is executed when there is an error in the request.
+
+
+So we have now dispatched an action, which kicked off an asynchronous API call and then we're getting that data.
+
+
+Okay, so this is pretty much it. We've dispatched our call and then we're getting the data off the store after the action in the store has committed the data via a mutation.
