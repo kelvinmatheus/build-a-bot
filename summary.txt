@@ -1503,3 +1503,47 @@ They are used to do requests to an API to fetch data.
 # Getters
 
 Vuex provides getters. Getters are basically functions in your store that fetch data from the state and do some sort of calculation on or manipulation of the data before returning it.
+
+
+--> 6.2 - Creating a Vuex Store
+
+The first need that we have in our app for state management is a place to store our cart. As it is right now, we've had to have our cart on our build page because we've had no way to manage state across pages. What we really want though is to create a cart page and then be able to add a robot to the cart from the build page and then have it show up on the cart page. Vuex will allow us to do that, but we'll first need to create a Vuex store. So let's create that. But first, we need to install Vuex. So, I'm going to stop my server here, and then I'm going to run npm install vuex. And then we'll save that. Now typically, this is all you'll do to install Vuex. But for this course, if you're following along, go ahead and specify version 3.0.1. This will just make sure that you don't have any inconsistencies with different Vuex versions in the future. So let's go ahead and run that. Alright, now let's go ahead and start our server up again. Okay, and now to create our Vuex store. So, back over in our project here let's create a new folder. We'll call that store. And then inside that store we'll create a new index.js file. Okay, now in our store file we're just going to go ahead and import Vue, and we're going to import Vuex. And now we just need to tell Vue to use Vuex like this. So now our Vue instance is aware that we're using Vuex. And then finally, we'll just export a new Vuex store like this. Alright. And we'll come back to this and add more to this shortly. But first we need to come back over to our main.js and configure our Vue instance to use our new store. So let's import that up here. And then we'll just use it down here like this. Okay, so now we have a new store that we can start working with. In the next clip, we'll see how to start adding data to our store using mutations.
+
+
+# To install vuex. Specify version 3.0.1., this will just make sure that you don't have any inconsistencies with different Vuex versions in the future.
+$ npm install vuex@3.0.1 --save
+
+
+
+# store/index.js
+
+# now in our store file we're just going to go ahead and import Vue,
+import Vue from 'vue';
+
+# and we're going to import Vuex.
+import Vuex from 'vuex';
+
+# And now we just need to tell Vue to use Vuex like this.
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+
+});
+
+
+# But first we need to come back over to our main.js and configure our Vue instance to use our new store.
+
+# main.js
+import Vue from 'vue';
+import App from './App.vue';
+
+import router from './router'
+import store from './store/index' # Here <-------
+Vue.config.productionTip = false;
+
+new Vue({
+  render: h => h(App),
+  router,
+  store, # And here <------
+}).$mount('#app');
+
