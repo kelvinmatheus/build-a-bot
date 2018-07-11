@@ -1158,3 +1158,69 @@ It is called active-class
   }
    ...
 </script>
+
+
+--> 5.6 - Working with Route Params
+          Our PartInfo component is just currently hardcoding the title and description here on the page. What we'd like to do is to be able to specify the part type, like heads, and the part index, and then use that information to look up that part and display its info. In order to do that, we're going to have to update our route to expect those parameters, and then we need to grab those parameters off of the route in our component. So let's update the route first. So first, we need to update the URL for this route to add the params and use a colon here followed by a variable name, so partType, and then :id. So this route now expects a part type like head, arm, torso, etc., and then a part id. With this information, we'll be able to look up our part from our parts list and display its information. So now let's go over to our PartInfo component and update it to grab these route parameters. So first we'll import our parts data. We'll import parts from data/parts. And now we'll need a computed prop, so let's add computed, and we'll have a part property that is a computed prop. So we'll return an object here, and that will look like the one down here in data. I'm just going to cut this out of here and paste it into here, and now we can get rid of data; we don't need that anymore. And then this is what we want to do the lookup for us from the params. So we want to look up the part and get the title and description for that part based on the params that are passed in on the URL. So the route params are available to us on the component's route property, so we can get the partType, for example, like this. We're going to say this.$route.params.partType. And then this partType right here needs to match the parameter name over here. So with that information, Vue can parse the partType off of the URL, and then we can get the ID in the same way. So id = this.$route.params.id. Okay, and this is red because our linter is telling us that we should prefer destructuring here, and so I can change this to look like this, set partType and id using destructuring, and we'll set it to this.$route.params. Okay, so now I can use this to look up the parts, so instead of returning this hardcoded object, I'm going to do a lookup on the parts array where the partType is the partType that I get off of the params. So remember that the parts object that we're getting, that we're importing, is a keyed object where the partType is the key, and then that returns an array of that partType, so then I'm going to do a find, and I'm going to find where the part.id equals the id from params. But actually, there's a problem here, and that's because the params that are pulled off a URL are always strings, whereas the id's on the parts in our data are integers. And so this triple equals actually isn't going to work because it's not going to find a part with an id that is a string. So we can fix that by casting id to be a number here. Okay, so now we have our router set up with params, and we have our component set up to use those params. The last thing that we need to do now is just pass the params from the PartSelector component. So over here in our PartSelector, down here in our showPartInfo function, we want to pass the URL parameters here for PartType and id, but we can't pass part params using the string syntax; we actually need to use the object syntax in order to pass parameters. So I'm going to change this to an object and use a named route where the name is Parts, and then I can pass params. And then I'm going to specify that the id param is this.selectedPart.id, and the part type is this.selectedPart.type. Okay, let's clean this up a little bit. We'll bring this down here, bring this down, and we'll bring this down. Okay, so now we are saying navigate to the parts route and pass in the params id and partType, and we're going to get those off of the currently selected part. Okay, let's go check that out. So back over here, now if I click on one of these parts, there we go. Now we are navigating to parts/head/1, and we get a description of that part, a Large Cyclops. And if I change this to this part, now it is the Friendly Bot head. Okay, before we wrap up on this, let's just demonstrate that this is also possible using links instead of code navigation by changing this link to be a router-link rather than navigating from code. So back in our PartSelector up here, let's get rid of this click binding, and then let's wrap this img in a router-link, and then we'll use a to binding. And let's grab the route expression down here from this function. I'm going to cut this out of there, and then we don't need this function anymore. And then I'm just going to paste that expression in here. And I'm just missing a closing bracket here, there we go. Okay, so this is just the same as when we were navigating with code, so I can click on these and go to the parts page with the params. Awesome. So this is working great, and we're passing parameters between components using router-link. But next we'll see how to decouple our PartInfo component from the router by passing the route params as props instead.
+
+
+
+# How to get parms from the routes
+
+const partType = this.$route.params.partType;
+const id = this.$route.params.id;
+
+eslint said tu us object destructuring
+
+const { partType, id }  = this.$route.params;
+
+
+
+return parts[partType].find(part => part.id === +id);
+
+=== expected the the id variable have the same that as the pard.id which is integer
+
+To cast(convert?) the id given by the params which is integer to integer, you need to add a + sign before the variable you want to
+transform into integer
+
+
+parts is a part object that has keys as the type of the robot
+
+---
+To pass params through routes the string syntax won't work.
+So we need to use the object syntax.
+
+
+showPartInfo() {
+  this.$router.push('/parts');
+},
+
+
+
+####
+
+ <img @click="showPartInfo" :src="selectedPart.src" title="arm"/>
+
+ showPartInfo() {
+   this.$router.push({
+     name: 'Parts',
+     params: {
+       id: this.selectedPart.id,
+       partType: this.selectedPart.type
+     }
+   });
+ }
+#
+
+# They are equivalent
+
+<router-link :to="{
+  name: 'Parts',
+  params: {
+    id: this.selectedPart.id,
+    partType: this.selectedPart.type
+  }
+}">
+</router-link>
+
+<img @click="showPartInfo" :src="selectedPart.src" title="arm"/>
