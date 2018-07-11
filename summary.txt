@@ -1096,3 +1096,31 @@ to -> must be a item a valid route previous added.
   <img class="logo" src="./assets/build-a-bot-logo.png">
   Build-a-bot
 </router-link>
+
+
+--> 5.4 - Styling Links Based on the Active Route
+    It's really easy in Vue to set up a style that will be used on links that match the current route. It'll be helpful to demonstrate this if we have a couple of links up here in our nav bar. Right now we only have one for the home page, so let's add another one up here that goes to the build page, in addition to that Get started link. So in our App component, let's duplicate this list item and paste it here, and we'll change its router link to link to the build route, and then we can get rid of this image here, and we will just call this Build. Okay, so now we have two links in our navigation area, a link that goes to the home page, and a link that goes to the build page. And you can see those here, so this one goes to the build page, and this one takes us back home. Now let's make it so that the link that corresponds to the current URL shows up in a different color. So we can easily do that over here in our template by adding a class down here in our styles. So I'm just going to add a router-link-active class. And this is a special class used by Vue, and I'm going to just tell it to change the color to white. So this is a class that Vue applies to any links that match the current route. So let's see how that's looking. So over here you can see that the Build-a-Bot link, which links to the home route, is currently white because we are on the home page, but if I click on Build here, you can see that Build turned white. However, we have a small problem in that these are both white, and the home page one should not be white anymore. That's because Vue by default is using an inclusive match on the route. If you look at the URL, technically it includes both the HomePage route, which is just the slash, and the build route, which is /build, so they're both white. What we really want for this is for it to be an exact match on the full URL. We can do that back over in our template by adding an exact attribute to our router-link. So I'm going to add that on both of our router-links, and now over here that should be fixed. There we go. So now only the exact route that matches the URL is being highlighted, so that's working great. Now you might be wondering, what if I don't want my class name to be called router-link-active? So down here we called this router-link-active, which is required in order for this to work, but we can use our own class name here. So I'm going to use foo here, and then back up here I could add an active-class attribute here and set that to foo. So now it will use this as the active-class, and I could put that down here also. And that should be working just fine. But we don't really have a need for that; I kind of like just using the built-in router-link-active class, so we'll leave it like that. Next, let's take a look at how to navigate to a route from JavaScript code.
+
+
+# It's really easy in Vue to set up a style that will be used on links that match the current route.
+
+# This is a class given by Vue that it applies to any links that match the current route
+# inclusive match on the route
+.router-link-active {
+  color: white;
+}
+
+
+# However, we have a small problem in that these are both white, and the home page one should not be white anymore. That's because Vue by default is using an inclusive match on the route. If you look at the URL, technically it includes both the HomePage route, which is just the slash, and the build route, which is /build, so they're both white. What we really want for this is for it to be an exact match on the full URL.
+
+# To just apply to the current route, we need to add the exact attribute
+<router-link class="nav-link" :to="{ name: 'Home' }" exact>
+  <img class="logo" src="./assets/build-a-bot-logo.png">
+  Build-a-bot
+</router-link>
+
+# If you would like to use a custom class instead of use the one provided by the Vue, you need to use a different attribute than exact.
+It is called active-class
+
+
+<router-link active-class="custom-name" class="nav-link" :to="{ name: 'Home' }">
