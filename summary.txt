@@ -1389,3 +1389,29 @@ router-view without a name is set to default.
 
 
 # Read this when you use it in production
+
+
+--> 5.11 - Preventing Pages from Loading with Navigation Guards
+
+Navigation guards allow you to either prevent a page from loading or prevent a user from leaving a page based on specific criteria. We'll take a look at both of these scenarios. Let's start with a beforeEnter guard. To demonstrate this, let's prevent this PartInfo page from loading if the id that's passed in is not numeric. You might think that we've already taken care of this when we added a prop validator that required the prop to be numeric, but this doesn't prevent the page from loading; it is more of a dev time warning that just throws errors in the console if the id isn't valid. We'd like to actually prevent navigation from happening. Notice that if we come over to our PartSelector and change id so that instead of passing in a valid id, it's just passing in a string. You can see that if I then try to navigate to this that it actually does navigate. You can see my URL has changed, but I just have a blank page. This is not ideal. What I'd like to do is to prevent the navigation from occurring completely. So let's go back here and change that back, and let's add a route guard to prevent this. So we can add that on a component or on a route. Let's see how to add one on a route. So we'll come over here, and right here in our PartInfo route, I'm going to add a beforeEnter function.
+
+And that takes three parameters, the route being navigated to, the route being navigated from, and a next function. And if we want to allow the navigation to proceed, we call this next function with a value of true. If we want to prevent the navigation, then we call it with false. So inside here, we want to prevent navigation if the id is not numeric. So to get the id, we can get that off of the to route, and then on there, there is a params object, and that should contain the id parameter. So basically, if this is a valid integer, we want to allow the route to proceed. So I'm going to set a variable where const isValidId equal to true if the number is a valid integer. So we can do that like this, Number.isInteger, and we cast this to a Number. And now isValidId will be true is the id param is a valid integer. So now we just need to call next, and we need to call it with false if the id is not a valid integer. So we can just pass in isValidId here, and then if that's false, it will prevent the navigation. Otherwise, it will allow it. So this should still be working normally now. I should be able to navigate to each of these parts, and that's working fine. But if we come back over to our PartSelector and change this again to a string and then try to navigate, you can see I'm clicking on these, but nothing is happening, and that's because our route guard is stepping in and preventing the navigation because the id is not valid. So before we forget, let's go undo this and put that back how it was. And you can see how creating this route guard was super easy, and it can be really handy. We could've defined this on the component instead, or we could even define it globally. In the next clip, we'll create a beforeLeave navigation guard to prevent the user from leaving a page, and we'll do that in the component so you can see how that works.
+
+
+# Navigation guards allow you to either prevent a page from loading or prevent a user from leaving a page based on specific criteria.
+
+validation in a props is used to log error for develop mode
+
+And that takes three parameters,
+
+the route being navigated to,
+the route being navigated from,
+and a next function.
+,
+beforeEnter(to, from, next) {
+  const isValidId = Number.isInteger(Number(to.params.id));
+  next(isValidId);
+}
+
+# It will prevent the page to be loaded if it receive false
+next(isValidId);
