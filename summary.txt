@@ -1073,6 +1073,26 @@ new Vue({
 
 
 
+--> 5.3 - Linking to Routed Pages
+
+Now that we have a couple of routed pages, let's see how to link between them. We'll start with this Get started link right here. So over in our HomePage component, you can see that we have this Get started link right here, and it's just an anchor tag. In order to link to a route, we instead need to use Vue's router-link element like this. And then instead of an href attribute, we use a to attribute, so we're going to route to this URL, or this route, and I'm going to just say /build here. So I can put in a string here that represents the URL for one of the routes that we've added, and then I just need to add the correct closing tag here. And now if we go check this out, I can now click on this Get started link, and there we go, it navigated me to the build page. So that's working now, but how do we get back to the home page? Let's make this logo and text here a link to the home page. This will give us chance to look at a little bit different syntax. So this is going to be in our App component, and that's up here in our nav section. So you can see here, here is my logo, and here is the Build-a-Bot text, so let's go ahead and add a router-link around the logo and text. And then in our last example, we just used to, and we bound that to a URL like this. Instead of using this syntax, let's actually use a binding here, and we're going to pass into it an object. And in this object, I'm going to specify the name of a route, so I want to navigate to the home route here. And if you remember, over in our router index file, each of our routes we gave a name, and so we're routing to the route that has a name of home, which is going to be this route here. So let's go check that out. So over here, you can see that we have a link now for our text up here, and the logo, it's also a link. So if I click on that, you can see it takes me to the home page. The only problem is that we don't want this link styling that we have here, so let's go add a class for that. So back over here on our router-link object, let's add a class, and that class will be nav-link. So notice that I can put a class on a router-link element just like I can any other element. And then down here in the styles, let's just add that nav-link class, and we'll set text-decoration to none, and we'll tell the color to be inherited. So this will avoid changing the color of the link. Okay, so if we come back over here, there we go, now our link is styled so I can go back to the build page and then back again to the home page. And this looks great. So now that we know how to link to our routes, let's go see how to style the currently active link based on the current URL.
+
+
+# In order to link to a route, we instead need to use Vue's router-link element
+
+
+to = href from html
+
+<router-link to='/build'></router-link>
+
+to -> must be a item a valid route previous added.
 
 
 
+# Another way of linking is using the :to binding which accept an object
+
+# The way we are routing to route that has the name as 'Home'
+<router-link :to="{ name: 'Home' }">
+  <img class="logo" src="./assets/build-a-bot-logo.png">
+  Build-a-bot
+</router-link>
