@@ -1626,3 +1626,36 @@ Okay, so we've used this addRobotToCart mutation in order to add our robot to th
 </script>
 
 So now we are accessing data from our store across three different components. It's being added from our RobotBuilder component and then it's being accessed by our cart and App components.
+
+
+--> 6.5 - Using Vuex Getters to Return Calculated Data
+          So far, we've been accessing state on the store directly just like this. Sometimes you want to have a computed property on the state that returns a value that is a calculation or derived value of some sort based on data that's in the state. This is what Vuex getters are for. To explore this, let's create a getter on our store that will return only items from the cart that are on sale. This is going to be based on this cart value from the state, but will basically filter the cart for just the items that are on sale. We could just do this in the component, but sometimes you want to reuse logic like this, and encapsulating logic like this in the store can be helpful. So first, let's go back over to our shopping cart and we will duplicate our cart here. So we'll grab this header and this table and we'll just duplicate it here. And then let's change this to h2. And we'll change this to say You saved money on these robots. And then let's just add a class on this h2 called saleItems. And then that class just looks like this. So it'll have a margin on the top to separate it from the normal part. And we'll give it a font size of 18px. And we'll give it a red color since it's sale items. Okay, now back up in our HTML, instead of looping over the cart we're going to loop over a new computed property and that will be called cartSaleItems. Okay. And then let's add a computed property down here for that. So this will be cartSaleItems. And then again, we could just grab the cart from the store and then filter it right here, but we want to do this in a getter in the store so it's reusable. So let's go back over to the store and we'll add a new section for getters. And then we'll add our cartSaleItems getter. And the first parameter for getters is the state. And now we can do whatever calculations from the state that we want to do here. So, we'll go ahead and return state.cart.filter. And then we'll filter that for just the items where the head is on sale. Of course, a robot would be on sale if other parts are on sale, but this is simple and you get the idea. You can go ahead and enhance this if you'd like. So now you can see that we're just filtering for any items where the robot's head is on sale. And this calculation is based on data that's in the state and then exposed as a cartSaleItems getter. And now this logic is nicely encapsulated here. So now the only question is how do we access it? Well that's pretty simple. So back over here in our cart where we created our computed property we can access it just like we do with the state, this.$store. But instead of saying .state we'll say .getters. And we'll ask for cartSaleItems. Okay, let's go see how that's working. So, here's our cart and here's our new section. Although it is not styled correctly, so let's come back over here and see what we did. Oh, here we go. This should be class. You probably saw that when I first did it and I was probably driving you nuts. But now that that's styled let's go take a look. Okay, there we go. So that's working now. So let's go ahead and add this robot that is not on sale. Now you can see we now have one item in our cart. And now let's go ahead and add this one that's on sale. And now let's go take a look at our cart. There we go. So you can see that we have two items in our cart and only one of them is on sale. So using getters is really easy and a nice way to encapsulate any calculation logic into your store. Next, we'll start exploring how to access data from a remote API. And that get a little bit more interesting due to the asynchronous nature of HTTP calls.
+
+
+# Sometimes you want to have a computed property on the state that returns a value that is a calculation or derived value of some sort based on data that's in the state. This is what Vuex getters are for.
+
+
+
+# using getters is really easy and a nice way to encapsulate any calculation logic into your store.
+
+import Vue from 'vue';
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+  state: {
+    cart: [],
+  },
+  mutations: {
+    addRobotToCart(state, robot) {
+      state.cart.push(robot);
+    }
+  },
+  getters: {
+    cartSaleItems(state) {
+      return state.cart.filter(item => item.head.onSale)
+    }
+  }
+});
+
