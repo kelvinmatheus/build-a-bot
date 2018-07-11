@@ -1124,3 +1124,37 @@ It is called active-class
 
 
 <router-link active-class="custom-name" class="nav-link" :to="{ name: 'Home' }">
+
+
+--> 5.5 - Navigating from Code
+           In order to demonstrate how to navigate to a route from within our JavaScript code, let's create a new page, and we'll use this page in the next few clips too, in order to demonstrate route params. But basically, we're going to create a page that, if we click on one of these parts like the head or this arm, it will take you to a page where it describes that part. So let's start by creating a parts folder, and then inside that folder we'll create a new component called PartInfo. And for that, we'll just have a basic template that looks like this. If you're following along, go ahead and pause this and type that in. And we'll have a pretty basic script section also that looks like this. So notice that we have a PartInfo component and that the data function is returning a part object, and that object has a title and a description. So this is just hardcoded to display this fixed text right now. We'll fix this later. Until then, let's go ahead and create a route for this and then update the PartSelector to navigate to this page. So over in our routes file, by the way, you may have noticed that I'm navigating by, on Windows I can hit Ctrl+P and then type in the name of a file to navigate to. So let's add another route down here, and that will be the parts route, and it will load our new PartInfo component. So let's import that component up here.
+
+           Okay, so now that we have a route for this, let's go ahead and go navigate to it from code. So in our PartSelector component, let's add a click handler on our img component, so @click, and we could use a router-link here. There's no reason not use a router-link here, but we're going to navigate from code in order to demonstrate this. And you'll find better use cases for this where you might want to do some sort of processing or something before you navigate, but this will work to demonstrate it. So we're going to have that call a showPartInfo function, which we'll add down here in the methods. And here's where we'll tap into Vue's router in order to navigate. Because we injected a router into our Vue instance in our main.js file, we have a router available to us here like this. And all we need to do in order to navigate is call push and pass in the URL of the route to navigate to. And just like the router-link element, I can either pass in a URL string here, or I can pass in an object. We'll leave this as a string for now, and we'll change it to an object when we explore how to pass route parameters. Okay, let's check this out. So back over here, at first it seems like this is not clickable because my cursor hasn't changed, but if I go ahead and click on this, you can see that it did navigate me to the parts page. And this is happening via our programmatic navigation. Okay, cool, let's just change our pointer styling so that it looks like this is clickable. So back in our PartSelector, you can see up here that we already have a class on here on this div that is surrounding the img, and it's class=part. So down here, we should find that class, a class that targets that already, right here, part img. So in here let's just add cursor: pointer. So now you can see I'm getting a pointer here, and when I click on it, it takes me to this page, but it's still displaying hardcoded information. This is not displaying information about the part that I click on. For that, we'll need to pass some route params to our parts component. So in the next clip, we'll start exploring working with router params.
+
+
+# In order to demonstrate how to navigate to a route from within our JavaScript code, let's create a new page, and we'll use this page in the next few clips too, in order to demonstrate route params.
+
+
+# Okay, so now that we have a route for this, let's go ahead and go navigate to it from code. So in our PartSelector component, let's add a click handler on our img component, so @click, and we could use a router-link here. There's no reason not use a router-link here, but we're going to navigate from code in order to demonstrate this. And you'll find better use cases for this where you might want to do some sort of processing or something before you navigate, but this will work to demonstrate it.
+
+
+<template>
+  <div class="part" :class="position">
+    <img @click="showPartInfo" :src="selectedPart.src" title="arm"/>
+    <button @click="selectPreviousPart()" class="prev-selector"></button>
+    <button @click="selectNextPart()" class="next-selector"></button>
+    <span class="sale" v-show="selectedPart.onSale">Sale!</span>
+  </div>
+</template>
+
+# Here 'this.$router.push('/parts');', it could be like the router-link and pass an object instead of the route URL.
+
+<script>
+  ...
+  methods: {
+    showPartInfo() {
+      this.$router.push('/parts');
+    },
+  }
+   ...
+</script>
