@@ -1459,3 +1459,47 @@ next(isValidId);
     },
   }
 </script>
+
+
+-> 6 - Managing State and Server Communication with Vuex
+
+--> 6.1 - Introduction
+
+Creating a Vuex Store
+Changing State with Mutations
+Retrieve Data from the State
+Using Getter to Return Calculated Data from the State
+Using Actions to Work Asynchronous Data
+Using Modules to Organize a Store
+Using Built-in Helpers to Work with the Store
+
+
+Introduction
+Welcome to this module on managing state and server communication with Vuex. In this module, we'll explore how to reliably handle data in a Vue application using Vuex. Vuex helps us by creating a central store where we can store and retrieve data in a way that works well with change detection across an entire Vue application.
+
+At the heart of Vuex state management is the Vuex store. The store provides not just a storage mechanism, but an interface for mutating data, requesting asynchronous mutations to data, and managing complex logic for fetching computed data with getters. The interface it provides ensures a shared data store for your application that will work well with Vue's change detection. At the heart of the Vuex store is the shared state tree. This is essentially a single object that contains all of the data for your entire application. When you first create your store, you provide an initial state object with reasonable defaults. This is important to Vue's change detection. We'll talk more about that later, but just know that the store contains a single state object that can be accessed throughout your application. Once the store is created, if you want to make changes to data in the store you do so by committing mutations.
+
+
+Mutations are synchronous and shouldn't be confused with actions, which are asynchronous. You might wonder what the purpose of a synchronous mutation is. Why not just change the state directly? Essentially, by telling the store to commit a mutation it keeps everything within the store consistent and working well with change detection. If you want to kick off an asynchronous call that will eventually mutate the store, such as making a call to an API to fetch data, that's where actions come in. Actions contain asynchronous calls using constructs like promises or async/await, which when finished commit mutations to the store. Actions and mutations work hand in hand to make asynchronous calls and then mutate the state. Sometimes when you want to access data from the store, you want to perform some complex calculation logic before returning the data. For example, you may have an array of unicorns in your store and perhaps it's common in your application to want to retrieve only unicorns who can heal fatal wounds. Well, all over your application you could retrieve the list of unicorns from your store and then filter it as needed. But this distributes and duplicates the logic all throughout your application. For purposes like this, Vuex provides getters. Getters are basically functions in your store that fetch data from the state and do some sort of calculation on or manipulation of the data before returning it. So these four items, state, mutations, actions, and getters make up a Vuex store. In this module, we'll cover all the fundamentals of working with Vuex including creating a Vuex store, changing state with mutations, retrieving data from the state, using getters to return calculated data from the state, using actions to work with asynchronous data, using modules to organize a store, and using built-in helpers to work with the store. This will really help us turn our Build-a-Bot app into a full-feature Vue application. So let's get started.
+
+# Vuex helps us by creating a central store where we can store and retrieve data in a way that works well with change detection across an entire Vue application.
+
+# Vuex Store
+# The store provides not just a storage mechanism, but an interface for mutating data, requesting asynchronous mutations to data, and managing complex logic for fetching computed data with getters.
+
+# The interface it provides ensures a shared data store for your application that will work well with Vue's change detection.
+
+## At the heart of the Vuex store is the shared state tree. This is essentially a single object that contains all of the data for your entire application.
+
+# You can change these state through out mutations.
+# mutations are synchronous and shouldn't be confused with actions, which are asynchronous.
+
+
+# Actions
+
+They are used to do requests to an API to fetch data.
+
+
+# Getters
+
+Vuex provides getters. Getters are basically functions in your store that fetch data from the state and do some sort of calculation on or manipulation of the data before returning it.
