@@ -1547,3 +1547,58 @@ new Vue({
   store, # And here <------
 }).$mount('#app');
 
+
+
+--> 6.3 - Changing Vuex Store State with Mutations
+Alright, now that we have a store let's start storing data in it. If we look at our RobotBuilder, we have this addToCart method. And right now, it's just storing the cart items in this array. We'd like to instead add that to our store so that it can be accessed by other components. Specifically, by a cart page component when we create it in the next clip.
+
+First off, our store needs a state object. The state object is where we'll store all of our data. So, we're going to create a cart property in our state object and default it to an empty array. This step is surprisingly important. You might think that we could just add this cart array to our state object somewhere else in our code later. Like, say, when we first mutate the state to add stuff to a cart. But it's important for Vue's change detection that you start with a default value for everything that you add to the store. This is because Vue's change detection works by tapping into the getters and setters of objects in the store. And if you don't add a default property to the state to start with Vue won't even notice changes when you add that data later. So, for everything that you're going to store in the state you need to add a default property for it here in the state object. Okay, so now that we have a default cart object, let's go ahead and add a mutation. So we'll just add a mutations object. And as we discussed previously, all changes to data in a store must happen through a mutation. You can't just access the store's state directly and start changing data. All changes must go through a mutation. So we're going to add an addRobotToCart method here. This addRobotToCart mutation will be called from our RobotBuilder component. And the first parameter of a mutation is the state. And then the remaining parameters, if any, are the data that you want to pass in to the mutation. So we're going to add a robot parameter. And now, in our function here we can say state.cart.push(robot). So we're accessing the state through the parameter that was passed in to the mutation. And then we're accessing the cart on the state, which is an empty array initially because we defaulted it up above. And then we're just going to push onto that array the robot that's passed in to the mutation. Cool. So this is all we need in order to add data to the store. Now let's go call this mutation. So back over here in our RobotBuilder, instead of pushing our robot onto this local cart array, we're going to access our store. And we can access it like this because our global view instance is aware of our store, and so it's made available to our components. So, on the store I'm going to call commit. And then the first thing that we pass in to commit is the name of the mutation in our store. So this was the name of this function here, addRobotToCart. So we're going to paste that in here. So we're going to commit the addRobotToCart mutation, and then the next parameter that we pass in is the data that we want to pass to that mutation. And so that's our robot, which is this expression here. Alright, now we can delete this line. Okay, so this is now adding a robot to our cart in our Vuex store using a mutation. And this happens when we click the Add to Cart button on our RobotBuilder. But we can't see this at work until we display the data from the store somewhere else. So in the next clip, were going to create a simple cart page and see how to retrieve the cart data from the store. And then you'll be able to see this working.
+
+
+# state object is where we store all of our data.
+
+#  So, we're going to create a cart property in our state object and default it to an empty array. This step is surprisingly important. You might think that we could just add this cart array to our state object somewhere else in our code later. Like, say, when we first mutate the state to add stuff to a cart. But it's important for Vue's change detection that you start with a default value for everything that you add to the store. This is because Vue's change detection works by tapping into the getters and setters of objects in the store. And if you don't add a default property to the state to start with Vue won't even notice changes when you add that data later.
+
+
+# All changes must be done by mutations. You cannot access the data from the state directly.
+# All changes to data in a store must happen through a mutation. You can't just access the store's state directly and start changing data. All changes must go through a mutation.
+
+
+import Vue from 'vue';
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+  state: {
+    cart: [],
+  },
+  mutations: {
+    addRobotToCart(state, robot) {
+      state.cart.push(robot);
+    }
+  }
+});
+
+
+
+# Now  we can access it like this because our global view instance is aware of our store
+
+# We are going to commit a mutation with the name of 'addRobotToCart'
+# the next parameter that we pass in is the data that we want to pass to that mutation.
+this.$store.commit('addRobotToCart', data)
+
+
+methods: {
+  addToCart() {
+    const robot = this.selectedRobot;
+    const cost =
+      robot.head.cost +
+      robot.leftArm.cost +
+      robot.torso.cost +
+      robot.rightArm.cost +
+      robot.base.cost;
+    this.$store.commit('addRobotToCart', Object.assign({}, robot, { cost }));
+    this.addedToCart = true;
+  },
+}
