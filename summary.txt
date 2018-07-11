@@ -944,7 +944,7 @@ are equivalent. I test it and both of them worked. Recheck it when you can.
 -> 5 -  Routing from Page to Page
 
 
-5.1 - Introduction
+--> 5.1 - Introduction
 
 All modern front-end frameworks provide some sort of routing mechanism for defining routes and navigating between pages in your single-page app. Vue.js, of course, is no different. In this module, we'll explore how to do this with Vue.
 
@@ -961,30 +961,115 @@ Enabling HTML5 History Mode, and
 Preventing navigation with navigation guards.
 
 
+--> 5.2 - Adding Routing to Your App
+          If we take a look at our App component, you can see we're importing the HomePage component and RobotBuilder component down here, but without routing the only way we've been able to see each of these pages is by replacing this element up here. What we really want do is make it so that we can get each of these pages and others by changing the URL or by clicking on links. In order to do that, we'll need to install routing. If you remember, when we first created our project with the Vue CLI, we had the option to select routing, but we opted not to. However, adding routing to an existing project is really quite easy. First, we just need to install the vue-router package. So over in my terminal, I'm going to stop my server from running, and then I'm going to npm install vue-router, and then I'm going to save that. Okay, and then let's go ahead and start up our server again. And then back over in our app, we just need to have a place where we can define all of the routes for our application, so let's create a new router folder, and inside there we'll create a new index.js file.
+
+          Okay, now inside here we're just going to import Vue, and then we just need to import the router, and we'll import that from vue-router that we just installed. And now we just need to tell Vue to use the router like this. So now Vue is aware of the fact that our application is going to use routing. And then we just need to export a new router. And then we just need to define the routes in here, so we pass into this a router configuration object, and then it has a routes property, which is an array. Okay, now we're ready to add our first route. This will be a route to our HomePage, and it will look like this. So it's an object that has a path property, and this is the URL that when Vue sees that this is the URL in the browser it should navigate to this route. And we'll give this route a name; we'll call it Home. And then we need to tell it which component to load when this route is navigated to. So we're going to tell it to load our HomePage component. And then we'll just have to import that up here. Okay, so this is our first route. This just says when I navigate to this URL, then display this component. And then this is just the name that we're giving to our route, and we can use that in various places in our code. So this is pretty simple. And while we're in here, let's go ahead and create a route to our RobotBuilder too. So let's copy this, and we'll add another one, paste that in here. And the route for our RobotBuilder is /build, and we'll name this route Build, and then we just need it to render the RobotBuilder component. And we'll just have to import that. Okay, so this is our routes file all built out for the two pages that we currently have in our application. Now we just need to pull these routes in when we create our Vue instance so that Vue is aware of them. So let's import our new router, and then we just need to add that to our Vue configuration object here. Okay, so now our Vue instance is aware of our routes. The last thing we need to do is tell our app where to display routed components. So over here in our App component, right here where we've been hardcoding the component that we want to display, what we really want to do instead is display the component that matches our current route. We can do that by replacing this with the router-view tag. So now Vue will display the component that matches the current route right here, and we don't need these imports anymore, and we don't need this components property anymore. Okay, cool, let's go check this out. So if we come over to our browser and put in this URL, we're navigating to the root of the website, you can see that it loads the home page. You may notice, however, that it also added this hashtag, and this part of the URL after the hashtag is currently what Vue is looking at for matching the routes. And we'll talk later in this module about how to get rid of that hashtag using the HTML5 history mode. But for now, I can navigate to my pages by changing the route here, so now I want to navigate to /build, and you can see that takes me to my robot builder page. Okay, awesome. So our routes are working great, but the only way we have to get around is by manually changing the URL. Let's go see how to create links to these routes.
+
+
+
+
+Without routing the only way we've been able to see each of these pages is by replacing this element up here. What we really want do is make it so that we can get each of these pages and others by changing the URL or by clicking on links. In order to do that, we'll need to install routing.
+
+
+
+# Install router
+
+
+$ npm install vue-router --save
 
 
 
 
 
+# Place to declare all router of our application
+
+# router/index.js
+
+# Okay, now inside here we're just going to import Vue, and then we just need to import the router, and we'll import that from vue-router that we just installed.
+import Vue from 'vue';
+import Router from 'vue-router';
+
+# Tell Vue to use the Router. Now Vue is aware that we will use routing.
+Vue.use(Router);
+
+# Then we need just export a new Router
+# We pass here our Router configuration object. Here is where we will define our routes.
+export default new Router({
+  routes: [],
+});
 
 
+# Routes Property which is an array
+
+this property will receive an object with the attributes to create a route.
+
+1 - parth -> URL that the user will use on the URL
+2 - name -> The route name. We can use in various places in the code.
+3 - component ->  which component to load
 
 
+Then, import the partial of the HomePage here.
+
+import Vue from 'vue';
+import Router from 'vue-router';
+import HomePage from '../home/HomePage.vue'
+import RobotBuilder from '../build/RobotBuilder.vue'
+
+Vue.use(Router);
+
+export default new Router({
+  routes: [{
+    path: '/',
+    name: 'Home',
+    component: HomePage
+  }, {
+    path: '/build',
+    name: 'Build',
+    component: RobotBuilder
+  }],
+});
 
 
+# Next you need to pull this routes inside the Vue application. That way Vue is aware of them.
+# main.js
+
+import Vue from 'vue';
+import App from './App.vue';
+
+import router from './router'
+
+Vue.config.productionTip = false;
+
+new Vue({
+  render: h => h(App),
+  router
+}).$mount('#app');
 
 
+# Now we need to say to our app where to display routed components.
 
+# App.vue
 
+# Now you just needed to create the tag router-view that the component that match that route will be render there.
 
-
-
-
-
-
-
-
-
+<template>
+  <div id="app">
+    <header>
+      <nav>
+        <ul>
+          <li class="nav-item">
+            <img class="logo" src="./assets/build-a-bot-logo.png">
+            Build-a-bot
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <router-view />
+    </main>
+  </div>
+</template>
 
 
 
