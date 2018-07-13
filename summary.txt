@@ -2076,3 +2076,38 @@ robotsGetterFoo() {
  return this.$store.getters['robots/foo'];
 },
 
+
+
+6.13 - Using the Vuex MapActions Helper
+       MapActions is similar to mapState and mapGetters, but it has a little bit different syntax. So, first of all, we will import mapActions right here from Vuex. And then the first difference with mapActions is that instead of using it in the computed section we will use it in the methods section. So right here I'm going to spread mapActions. And there are a couple of actions in here that we want to map, and both of them are in the robots module. The first one is up here in this created hook. It is this dispatch right here where we're dispatching getParts. And the second one that we want to use is this addRobotToCart action down here. So, we'll map both of these actions here. And we'll start out by specifying the robots module since it's a namespaced module. And then we don't need to rename these actions at all so we'll just use the array syntax and we'll pass in getParts and addRobotToCart. So actually, this syntax is identical to the other helpers, but we're putting it in the methods section of our component. And the way we call them is interesting for actions. And this is in the methods section so that means that these are now methods on our component named getParts and addRobotToCart. So, if we go up here to where we dispatch our getParts call we can just call this.getParts. And the interesting thing about this is that notice that we're not calling dispatch anywhere anymore. Calling dispatch is taken care of for us by the mapActions helper. So that makes using it really nice. And now we can do the same thing for addRobotToCart down here in our addToCart function. So we can just call this.addRobotToCart. And then we'll delete all of this, but we'll still pass in our robot. Cool. So now we're not having to worry about any dispatch details, and this feels a lot cleaner. So let's go check this out. So, over here in our RobotBuilder, our robot builder is getting its parts. And I can still add to cart here. Awesome, this is working great. Let's go clean this up so that we don't have this extra stuff up here anymore. So, in our App.vue component I'm just going to comment this out in case you want to reference it later. And there, now our site's looking descent. Cool. So now we've talked about mapState, mapGetters, and mapActions. So the last helper that we'll talk about is the mapMutations helper.
+
+
+
+ #### Map action must be declared inside the method section
+
+ ...mapActions('robots', ['getParts', 'addRobotTo']),
+
+created() {
+  // this.$store.dispatch('robots/getParts')
+  this.getParts();
+},
+
+
+methods: {
+  ...mapActions('robots', ['getParts', 'addRobotTo']),
+  addToCart() {
+    const robot = this.selectedRobot;
+    const cost =
+      robot.head.cost +
+      robot.leftArm.cost +
+      robot.torso.cost +
+      robot.rightArm.cost +
+      robot.base.cost;
+    this.$store.dispatch('robots/addRobotToCart', Object.assign({}, robot, { cost })) <---- From here -------------
+      .then(() => this.$router.push('/cart'));
+    this.addedToCart = true;
+  },
+}
+
+this.$store.dispatch('robots/addRobotToCart', )
+this.addRobotToCart(Object.assign({}, robot, { cost }))
