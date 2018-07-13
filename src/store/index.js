@@ -28,8 +28,7 @@ export default new Vuex.Store({
       // Passing cart object as the body of the request
       // axio request returns a promise
       axios.post('/api/cart', cart)
-        .then(() => commit('addRobotToCart', robot))
-        .catch(console.error);
+        .then(() => commit('addRobotToCart', robot));
     },
   },
   getters: {
