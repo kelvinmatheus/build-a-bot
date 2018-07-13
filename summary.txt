@@ -2028,3 +2028,51 @@ getters: {
 #### OBS
 In a non-namespace module the getters represents all getters from the Global and other modules.
 If the module is namespaced, the getters represent only its own getters.
+
+
+6.11 - Using the Vuex MapState Helper
+If we take a look at the methods that we just added on our app component you can see that there's a lot of boilerplate here just to get these three props off of state. Vuex provides a mapState helper to simplify this. So let's import that helper. So up here I'm just going to import mapState from Vuex. And then we can just use mapState right down here in the computed section. So, the most simple form of mapState looks like this. So you spread the results of calling the mapState function and then we pass along to that an array of strings. So this is basically saying take the foo property off of the rootState and provide it as a computed prop with the same name. So it basically replaces this syntax down here except that we're actually renaming this property to rootFoo. If you want to give your computed prop a different name than what it's called in the state, like rootFoo in this case, then you need to use an object syntax instead of the simple array syntax. And if I had additional props here with the array syntax I could just add the other props here. But if I want to rename it I need to use a different syntax. So instead of an array I'm going to use an object, and I'm going to set to rootFoo on that object to foo. So this is a short-hand syntax that now is exactly equivalent to the syntax below. So we can remove this. We'll just need a comma here. Okay, but what about this robot's foo? We would like to be able to just say robotsFoo here, but what would we pass in here since this is coming from the robots module? Unfortunately, this requires a little bit more verbose syntax. So, we set this to a function and then we can pull whatever off the state we want to like this. And then we can delete this right here. So now we have our mapState function boiled down to just a single line, whereas it was six lines before. Granted this is wrapping and, frankly, we should probably clean this up by moving this down here like this. So that syntax is a little bit more verbose when you are working with modules, but you can see this is still a lot cleaner than it was when it was two separate properties and we were using six lines. But actually, there's another syntax that we can use when working with modules. So let's use this other method for this usersFoo property. So I'm just going to use a second mapState call here, but this time the first parameter is going to be the name of the module. So now this mapState function will work with anything on the users module. And since we're renaming foo to usersFoo then I can just pass in an object, usersFoo, and set that to foo. So this syntax is now equivalent to this code here. So we can delete this code. So that's a pretty clean syntax that we could use. And we could use that up here for robotsFoo also, but we'll leave this how it is so that you can see the different examples. And actually, this is plural, users. However, we have a small problem here. If we go over here and look at our site, you can see usersFoo is not rendering. And if I look at my console you can see module namespace not found in mapState, and it's referencing our users module. Well, the problem is, and I think this is kind of unfortunate, but the problem is that this syntax only works with namespaced modules. And so, we're actually going to be forced to use this syntax for the usersFoo property. So I'll use the function syntax state.users.foo. But we could use this syntax for robots since it is a namespace module. Now if we go take a look at this, now everything is rendering correctly. And if I refresh we don't have any errors here. So just keep in mind that this syntax can only be used for namespaced modules. Okay, cool. So, just like there is a mapState function there's also a mapGetters helper. So let's go take a look at that next.
+
+computed: {
+  ...mapState({
+    rootFoo: 'foo',
+    usersFoo: state => state.users.foo,
+  }),
+
+  rootFoo() {
+    return this.$store.state.foo;
+  },
+
+
+  // This syntax only works with namespaced modules
+  'robots' => module name
+  robotsFoo => replace the called method robotsFoo()
+  'foo' => desired state field from robots module
+  ...mapState('robots', { robotsFoo: 'foo'})
+  Replace the following method
+    robotsFoo() {
+      return this.$store.state.robots.foo;
+    },
+
+
+...mapState({ rootFoo: 'foo' }) is equivalent to
+rootFoo() {
+  return this.$store.state.foo;
+},
+
+
+
+
+6.12 - Using the Vuex MapGetters Helper
+       Using mapGetters is identical to using mapState. So let's go ahead and import that up here also. And then we can use it in the exact same way. So down here I'm going to spread mapGetters. And then for the rootGetter I will just use the object syntax because I want to rename it to rootGetterFoo. And that is going to grab the foo getter off of the root store. And then I will use the module syntax for the robotsGetter like this. And then we can delete these two functions here. And actually, this usersGetterFoo is leftover code from an earlier demo. We're not actually using that so we can delete that there. And we can delete the binding for it up here also. Okay. And that should be working fine. There we go. The getters are now working just as we'd expect. And again, this code is a lot less verbose than it was before, and so these helpers are nice. And next, we'll do the same thing for actions. Although mapActions is a little bit different so let's take a look at that.
+
+
+...mapGetters({ rootGetterFoo: 'foo'}),
+...mapGetters('robots', { robotsGetterFoo: 'foo'}),
+rootGetterFoo() {
+ return this.$store.getters.foo;
+},
+robotsGetterFoo() {
+ return this.$store.getters['robots/foo'];
+},
+
