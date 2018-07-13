@@ -2111,3 +2111,19 @@ methods: {
 
 this.$store.dispatch('robots/addRobotToCart', )
 this.addRobotToCart(Object.assign({}, robot, { cost }))
+
+
+6.14 - Using the Vuex MapMutations Helper
+
+MapMutations is not any different than all the other helpers. We don't have any mutations that we're using outside of the store, but I can show you how we'd use it if we did. So we'll just import mapMutations. And then down here in methods we'd map mutations just like everything else. So we spread mapMutations, and then add the module name if necessary, and then the array of mutations that you want to map over. Of course, we could use the object syntax here also just like we did with mapState if we wanted to rename the method locally. And that really is all there is to using mapMutations. It's just like using any of the other map helpers. But, of course, we don't have any mutations so I'm going to go ahead and delete this. So with that, we've covered all of the different Vuex map helpers. And, in fact, this concludes our discussion of Vuex.
+
+<script>
+  import { mapActions, mapMutations } from 'vuex';
+
+
+methods: {
+  ...mapMutations('robots', ['someMutations']),
+
+IF YOU WANT TO CHANGE THE METHOD NAME LIKE THE GETTERS, YOU CAN DO THIS WITH THE ACTIONS AND MUTATIONS TOO.
+
+...mapGetters('robots', { robotsGetterFoo: 'foo'}),
