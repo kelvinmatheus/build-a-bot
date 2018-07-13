@@ -1913,3 +1913,6 @@ export default new Vuex.Store({
 
 # So I want to call out something important here and that is that we still have a single state tree or a single state object. So we still have a single state object and on that state object we have a robots module.
 
+
+
+# By the way, it's worth mentioning that with async/await it's expected that in the future mutations and actions will be combined into a single action.
