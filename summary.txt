@@ -1924,7 +1924,7 @@ export default new Vuex.Store({
 
 ### Problem
 
-The dispatch method will call a method x from all module if they have the method x implemented.
+The dispatch method will call a method (actions) x from all module if they have the method x implemented.
 
 To avoid that it calls more the one action from multiple modules, we need to
 
@@ -1956,3 +1956,75 @@ States are namespaced by the default but mutations, actions and getter are not. 
 
 
  here where we use a string to access the property and then we preface the name of the getter with robots/.
+
+
+6.12 - Understanding Global and Namespaced State
+We've discussed how we have one single state tree or state object, but to remind ourselves of how that state is structured let's add a couple of variables to our state. First, we'll add a state object on our root store config. So, we'll add state here and then we're going to put a variable in here call foo. And it will just be set to root-foo. Okay, so we now have a foo property in our store. And this is called the root state because it's not in a namespaced module. So it's part of the root state. And actually, any state that you add to non-namespaced modules is also part of the root state. Now let's add this same property to the other modules. So, we'll add a foo property here, but it will be set to robots-foo. And then we'll do the same thing in the users module. This will be called users-foo. Okay, and then let's do something similar with a getter at each level. So in our root store let's add a getter. So we need a getters section. And we'll create a foo getter. And we will return root-getter/ and then the value from the state property, state.foo. So this is just prepending root-getter to that string and returning it. Now let's do the same thing for getters in the robots module.
+
+
+ So down here we'll add a foo-getter, but it will prepend robots-getter. And then we'll do the same thing for users. So right here in getters we'll add a foo getter and it will prepend users-getter. Okay, so now we have a foo property on the state at each level and a foo-getter at each level. This will help us demonstrate some interesting things about how state works across different modules. So, let's go print those out in our App component here, and we'll put it right here at the top. So I'm just going to print each of these out like this. So you can see that here I'm printing out each of the foo properties from the state. And then down here I'm going to print out each of the foo getters from the state in each of the modules. So we'll need some computed props for that. So down here in computed I'm going to create a rootFoo computed property. And that will return this.$state.foo. And then we'll do the same thing for each of the modules. So this will be robotsFoo, and this will return this.$state.robots.foo. And the same thing for users. Okay, and now I just need computed props for each of the getters. So I'm going to have a rootGetterFoo going to return this.$store.getters.foo. And then the same thing for robots. But it will return this.$store.getters and we need the string syntax robots/foo. And then same thing for users. And I mispelled that here. Oh, and it looks like I have some typos up here. This should be store.state. I have that in a couple places here. Okay, so let's go take a look at this, see what it looks like. Okay. So there's something interesting at the top here in these first three variables that we're printing out. So these are the items that we got directly off of state. Notice that users does indeed have its own namespaced state even though it is not a namespace module. So, in our App component we're accessing it with this.$store.state.users.foo, which is a thing. So, even though users is not a namespace module it does have its own namespaced state. So again, just a reminder that state is always namespaced in a module even if the module itself is not set to be namespaced. And then another point to make is that root state is not inherited by modules. And so if I get rid of this foo property here and save it on the users module and then come back and look at this it is empty. So, this.$store.state.users.foo is not set to anything. So it is not inherited from the root state. Now let's go ahead and put that back. Okay, so let's come back and look at this. And let's look at the getters. So first of all, notice that the users getter did not return anything. And that's because in our App module, in the computed prop, we were accessing it with this.$store.getters users/foo. And so, we're trying to access a namespaced getter on a module that is not namespaced. So that's not too surprising that that's not showing up. But what might be surprising is if we look at the console here you can see that we're getting this error, duplicate getter key: foo. This is because the users module and the root store are sharing the same namespace. And yet over here you can see that we've created, in our users module, a foo getter. And we also have, on our root store, a foo getter. And so, we're getting an error because we've created a getter with the same name in two different places that share the same namespace, specifically the root namespace. So let's see what happens if we get rid of this getter that's at the root level. And so now if we go back to here it shouldn't be too surprising that when we called the root getter we got the users getter value. And so, in our computed property in our App module, the root getter is calling this.$store.getters.foo. And in the users computed property we're calling getters users/foo. And we've already talked about that this is not a thing. This is not defined. So it's interesting that the root getter is getting the value from the users module. And that's because this is not a namespaced module and so its getters are shared with the root store. And so, the root store doesn't have a getter, but we added one here and technically we're adding that to the root namespace. And so when we requested the foo getter from the root namespace it retrieved this one even though it was defined in the users module. Okay, now let's explore something else with this getter. So, I'm going to remove this foo property off of our users state and then I'm going to come back over here. And let's see what we're getting. Okay, so now when we call the foo getter we're getting users-getter/undefined. And so that's kind of interesting because we've already established that we would get into this getter here because we don't have one defined on the root and they're shared. But why is state.foo undefined? If the users module is not namespaced why are we not getting the value here from state.foo? Well, remember, state is always namespaced. And the state that's passed in to getters and other places like actions and mutations within the module, it is always that local module's state. And so this is trying to get state.foo off of our users module and there is nothing. And so that is printing undefined. So that's the other important point is that the state that's passed in to mutations, getters, and actions is always the local state from that module. But what if we did want to access the root state from this getter? Well, that's available to us as the third parameter in our getter function. So, the second parameter is the getters and the third parameter is rootState. So, in a non-namespace module this is all the getters in the entire store including getters from namespace modules. In a namespace module, these getters are only the local getters in case you need access to them inside another getter. And then we have the rootState. So let's use that here. Okay, and now if we go take a look at this, there we go. Perfect. So we are now getting --- From the getter inside the users modules we are now getting the value from the rootState. And that remains true even if we come back over here and put a foo property on here set to users-foo. Over here, you can see we're still getting root-foo and that's because we're using the rootState here. And everything that we've said here about getters is also true of actions and mutations except that rootState is not actually available to mutations. So it is not passed in to mutation functions. But in an action, I can get access to rootState by de-structuring it just like we do everything else off of the context object. And then you can access rootState here. But we don't have a need for that so we'll remove that. So as a reminder, rootState is not actually available to mutations. There's been some discussion about whether it should be added here, but for now if you need access to the rootState in a mutation do it in an action, not the mutation. Hopefully this has helped create a little bit more clarity around some of the nuances with what data and methods exist where in a namespaced and non-namespaced modules. Next, we're going to take a look at some helper functions that Vuex provides to make it a little less verbose to access items from the store in our components.
+
+
+# We've discussed how we have one single state tree or state object
+
+
+so we now have a foo property in our store. And this is called the root state because it's not in a namespaced module. So it's part of the root state.
+And actually, any state that you add to non-namespaced modules is also part of the root state.
+
+# store/index.js
+
+import Vue from 'vue';
+import Vuex from 'vuex';
+import robotsModule from './modules/robots'
+import usersModule from './modules/users'
+
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+  state: {
+    foo: 'root-foo',
+  },
+  modules: {
+    robots: robotsModule,
+    users: usersModule,
+  }
+});
+
+-----
+
+
+ So down here we'll add a foo-getter, but it will prepend robots-getter.
+
+ # Different sintax
+
+ getters: {
+     foo(state) {
+       return `root-getter/${state.foo}`;
+     }
+   }
+
+
+# state fields are not inherited from the Global state
+
+# If the root does not have the a getter and you try to access a x getters, the Vue will check if the roots have the x. If not,
+It will check in the modules that it
+
+
+# the state passed as a param to mutations, getters and actions is the local state, not from its inherited module. When we are talking
+about the main state file.
+
+
+# All these are applied to actions and mutations, although the rootState is not available in the multation.
+
+
+The rootState is available in the third params in the getter method like this:
+
+getters: {
+  foo(state, getters, rootState) {
+  }
+
+}
+
+#### OBS
+In a non-namespace module the getters represents all getters from the Global and other modules.
+If the module is namespaced, the getters represent only its own getters.
