@@ -1,0 +1,9 @@
+# Install dependencies
+$ npm install
+
+# Run server
+$ npm run serve
+
+
+$ Run API server with a different port. It is configure to the course
+$ npm start

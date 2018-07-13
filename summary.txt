@@ -1870,14 +1870,46 @@ this.$store.dispatch('addRobotToCart', Object.assign({}, robot, { cost }))
 As this mutation returns a promise, I can use the method .then to handle the request return.
 
 
+6.9 -> Organizing the Store with Modules
+
+      So far, we've been adding all of our actions, mutations, getters, and state objects to the single store file. This has been fine for this small application, but imagine a larger application with dozens or even hundreds or thousands of items in it. A single file would quickly become unmanageable. This is where modules come in. They allow us to break up a single store into multiple modules for maintainability. So let's imagine that our application had need for some other actions in here related to users, such as a sign-in action for example. We could change our store to have two modules, a robots module and a users module. So let's create a robots module, that's easy. First we'll create a modules folder inside our store folder. And then we'll create a new file for our module. I'll call it robots.js. And then I'm going to move all of this that is all related to robots, starting with state all the way down to my getters. I'm going to cut that out of here. And then over here I'll export a different object and I'll paste that in here. And we'll need our axios import. And we won't need it over here anymore so I'll move it from here and import it here. And then back in my store file I'll import my new robots module. So import robotsModule from modules/robots. And then finally, in my configuration object down here for my store, I'll just add a modules section. And then you just add a property for each of the modules. So I'm going to create a robots module and that will use my new robotsModule. Okay, we'll come back and add a users module in just a sec. But for now, let's go take a look at our site. Okay, this is not looking great. So, if we look at our console you can see that we are getting this error, Cannot read property "length" of undefined. And that's happening in our App component. So, if we come back over here and look at our App component, we come up to the template up here. That error is occurring right here where we're trying to show the number of items in the cart. So the problem is that the cart is undefined here. And if we go down to our computer property for that you can see that we're getting it from this.$store.state.cart. But we just added a robots module. And if we go look at that robots module you can see that the cart is in the robots module state, not in our root store state. And so, over here we need to access our cart with state.robots.cart. Notice that robots matches the name that we gave our module over here on line 10. Okay, so that should fix our error. And you see our site's rendering. If I refresh we have no errors here. So we're now working fine again. And we are accessing the cart through our robots module.
+
+
+      So I want to call out something important here and that is that we still have a single state tree or a single state object. So we still have a single state object and on that state object we have a robots module. Okay, so we've fixed this here, but there are actually several places in our app that we need to fix this. And right now, everything is in the robots module. So I'm going to undo this change here, and then I'm going to do a global search and replace, which you can do by hitting Ctrl+Shift+H if you're using VS code. And I'm going to replace this.$store.state with this.$store.state.robots. And that should be good. Just for a little more safety I'm going to put an extra dot here on the end. And then I'm going to go ahead and replace everything here. Oh, you have to execute the search first and then I will replace everything. There we go. So that updated four occurrences across four files. So now everything that was accessing state is now accessing the robots state, which is where all of our state currently is. Okay, so now everywhere on our site should be working. We get our robot parts and we can add to the cart. And we're getting our cart data here. And that data's all coming through the state in our robots module. Now, you might be wondering about the fact that we have fixed everywhere where we're accessing state, but we didn't go in and add robots to the places where we're calling actions and mutations and getters. We'll talk about that more in the next module, but just realize that state is a little bit different than those other pieces of the store when it comes to modules. Okay, so just keep that in mind. Now, back over in our store we currently have a single robots module. In order to see just what it looks like if you have two modules and also to set us up for working with namespaced modules in our next clip, let's add a second module. We'll call that users. So, in our --- I'm going to hit Ctrl+Shift+E to get my explorer back here. And then in my modules folder I'm going to create a new file and that will be users.js. And then we'll get the contents of this from our GitHub repo. So over here in the repo I'm going to click on src and then store/modules and users. And let's grab the contents of that and paste it in here. Alright, now we have a users module, and notice that it has a sign-in action. And the sign-in action commits the updateCurrentUser mutation. And that mutation just puts the user returned from the axios call on the state. By the way, it's worth mentioning that with async/await it's expected that in the future mutations and actions will be combined into a single action. But for now, they're separate. Now, don't worry too much about what's happening in this users module. We just needed a couple of modules to demonstrate a few things. So let's go add this to the store. So back here in our store we will import it. We'll just copy this one and we will import the usersModule from modules/users. And then we can just add that down here. So we'll create a users module and paste in usersModule here. Okay, and this is it. So we now have a store with multiple modules in it. And in the next clip we're going to take a look at namespacing our modules, which will separate these two even further from each other.
 
 
 
+<script>
+
+  export default {
+    name: 'app',
+    computed: {
+      cart() {
+        return this.$store.state.robots.cart;
+      }
+    }
+  };
+
+</script>
+
+# Now that we are importing from the module file we need to change how to access the state from the module in the App.js likes followed.
+
+From
+
+return this.$store.state.cart;
+
+To
+
+return this.$store.state.robots.cart;
+
+The robots come from the module name as followed
+
+export default new Vuex.Store({
+  modules: {
+    robots: robotsModule,
+  }
+});
 
 
-
-
-
-
-
+# So I want to call out something important here and that is that we still have a single state tree or a single state object. So we still have a single state object and on that state object we have a robots module.
 
