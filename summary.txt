@@ -1934,3 +1934,25 @@ To avoid that it calls more the one action from multiple modules, we need to
 #        Okay, so it's important to note here, I mentioned this earlier and I'll probably mention it again, so the state on a module is always namespaced whether the module is namespaced or not. You may remember that when we first added our robots module we had to immediately go and add robots. to everywhere where we were accessing the state. And that was before we namespaced this module. So state is always namespaced even if your module is not set to namespaced. But mutations, actions, and getters are only namespaced if you set namespaced to true. That caught me up a few times when I was first learning Vue so that's important to note. Okay, so now we know how to create a namespace module and who accessed the actions on namespaced modules. Next let's take a look at how to access namespaced getters.
 
 States are namespaced by the default but mutations, actions and getter are not. So you need to set the namespace inside of the mode because of it.
+
+
+6.11 - Accessing Namespaced Getters
+       If you remember on our cart page, we're displaying down here any robots that are currently on sale. But that's actually broken currently. If we go add a robot that's on sale, like this friendly robot, to our cart and then come over here, you can see that it's not showing up down here. This is because we namespaced our robots module. But we never actually updated the way that we're accessing the getter right here. And if you look at the way we're accessing state up here you might think that we would access it the same way. And we could just say robots right here. But getters.robots is not actually defined. You have to actually access getters using this notation here where we use a string to access the property and then we preface the name of the getter with robots/. So now if we go take a look at our cart you can see that we are getting our sale robot down here. And if I add this one that's not on sale then it is not down here. So our getter is working now. So, a slightly different syntax for accessing getters in namespace modules. Next, let's take a closer look at how our Vuex state is structured and used inside of our modules when using namespace modules.
+
+# Using namespace with getters has a different approach that we used with the state
+<script>
+  export default {
+    name: 'Cart',
+    computed: {
+      cart() {
+        return this.$store.state.robots.cart;
+      },
+      cartSaleItems() {
+        return this.$store.getters.cartSaleItems;
+      }
+    }
+  };
+</script>
+
+
+ here where we use a string to access the property and then we preface the name of the getter with robots/.
