@@ -2261,3 +2261,30 @@ export default {
     element.style.position = 'absolute';
   }
 }
+
+
+7.4 - Using Directive Lifecycle Hooks
+
+
+      So over here in our directive you can see that we're using the bind life cycle hook. This hook gets fired when the directive is first bound to the element. So this code only gets fired once. But demonstrating this with hot module replacement is obscuring the issue, so let's create a better way to demonstrate the problem. So over here in our part selector component, instead of hard coding the padding here, let's bind to it. We'll use a new pin padding property. And we'll use that in both places here. And then to help demonstrate that let's also just display that pin padding right here. And then let's just make it so that when we click on this sale element it sets the pin padding to 30 pixels. Okay, so the attributes for our bottom and right are set to pin padding and then when you click on this element we set pin padding to 30 pixels. In order for this to work we need to add it to our data function down here. So we'll add pin padding and let's default that to 10 pixels. So when the component first loads this will be set to 10 pixels and then when we click on the sale element it will change it to 30 pixels. Okay, so let's go take a look at this. So let's refresh and then over here, so you can see that the pin padding is set to 10 pixels and actually, where we place this is not very easy to see so let's move this interpolation up here to the top. That should make it easier. There we go. So you can see that our padding is set to 10 pixels. And when I click on this element it will change it to 30 pixels. There you can see it changed it to 30 pixels up here but notice that our directive didn't get updated. And this is because we are only binding to the bind life cycle hook in our directive. So there is another life cycle hook that we can bind to and it's the update hook. So right here let's add an update life cycle hook and that takes in element and binding also. And then this update function is actually going to do the exact same thing as our bind function. So let's extract this out here. We're going to cut this out of here and we'll create a new function called apply style and that will take in element and binding. And then we'll just paste that code in here. Okay so now we have this apply style and we can actually call that from bind and from update. Okay so now our directive will also get updated whenever its parent component is updated, which includes when the directive's bindings are updated. So let's go check this out. So come back over here now and let's refresh one last time and then come over here. Now notice when I click on this that the directive is updated. So the directive is noticing changes now on the bindings of its parent element.
+
+      Okay now there are three other life cycle hooks that can be tapped into including inserted, which fires whenever the bound element has been inserted into its parent node,
+
+       and
+
+        And then the last hook is  We're not going to demonstrate these three life cycle hooks in this course because they're much less common. The bind and update hooks are by far the most common. In fact, it's actually so common to use bind and update together that there is a shorthand for creating a directive that hooks into both the bind and update hooks. And since that's what our directive is doing let's change ours to shorthand syntax. So here instead of exporting an object we're going to export a function. And that function is going to take in the element and binding parameters and then the body of this is just going to be this function here, so we'll cut this out here and paste it in here. And then we can delete the rest of this. And we can delete our reply style function. Cool, so you can see how this is much more to the point and a lot less ceremony going on in here. And we are now binding to both the bind and update life cycle hooks. So this is a really common way to write directives. And that should still be working fine. So let's refresh this. And there we go. Our directive is still working as expected. Alright, awesome. And that's how we create directives. Now let's go clean up this extra 30 pixels display here. We don't need that. There we go. Cool, so now let's go take a look at how to make directives available globally.
+
+
+      You may have noticed throughout this course that we've had hot module replacement working, which causes our dev changes to be immediately rendered without having to refresh the browser. And you may have also noticed that our changes to our directive have been requiring us to hit refresh, and this is due to the life cycle hook that we're binding to in the directive.
+
+
+* bind life cycle hook. This hook gets fired when the directive is first bound to the element.
+
+* update -> Okay so now our directive will also get updated whenever its parent component is updated, which includes when the directive's bindings are updated.
+
+* inserted -> inserted, which fires whenever the bound element has been inserted into its parent node,
+
+* componentUpdated -> component updated, which like update, fires when the containing component has been updated. But with the update hook it could get fired before the containing component's children are updated. The component updating method fires only after all children have been updated.
+
+
+* unbind -> unbind, which gets called when the directive is unbound from its parent component.
