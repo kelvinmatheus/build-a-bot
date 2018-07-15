@@ -2184,3 +2184,63 @@ v-pin
 Do not forget to prepend the v- before the pin name when you add it to the tag.
 
 the pinDirective is the name data you gave to the directive when it was imported to the file.
+
+
+7.3 - Passing Data to Directives
+      Our new pin directive is kind of cool but it's not very flexible. It's always going to pin items to the bottom right corner. Let's make it so that we can tell the directive where to pin itself. There are a couple of different ways that we can pass information to a directive. So let's explore them both. The first is through the use of args. So back over here where we're using our directive,
+
+
+      we can use args to tell our pin directive we want it to be pinned to the top right like this. So here I'm using args to say I want to position this in the top right corner. It's fairly expressive and to the point. The first part of this expression, position, is called the arg and the parts that follow it, separated by periods, are called modifiers. So position is the arg and top right are the modifiers. And then back over here in our directive we can get access to that information through the second parameter, which is binding. And the binding has a couple of properties that we're interested in, arg and modifiers. So let's just console.log those out for a second to see what those look like. So we'll console.log the arg and then the modifiers. Okay and let's go look at that. So if we open our console here there we can see that we're getting a couple of things logged out. So arg is positioned and modifiers is an object with two properties, right, which is set to true, and top that is set to true. So modifiers is an object that contains each modifier set to true if they exist. So back in our directive, we'll check the first arg to make sure that it's set to position and if not we'll just do nothing, so get rid of our console.log here and then we'll just say if binding.arg does not equal position, then we'll just return and do nothing because the data being passed in is not in the format that we expect. And then basically I want to loop over each of the modifiers and apply the style that pins the element to the corresponding position. So to do that I'm going to use object.keys, which enumerates all the keys on an object. And so we want to enumerate over all the keys on the binding modifiers object. And then for each of those we will call this function and then the key will be passed in and then for each key in the keys here are going to be top and right, I just want to set element.style with that key equal to five pixels. So this will set element.style.top to five pixels and element.style.right to five pixels if those are the modifiers that are passed in. Okay and then we can get rid of these down here. So we'll always set the position to absolute and then we will set the top and right and in this case, because we're passing in top and right here, we will set top and right to five pixels. If we send in something else other than top and right those will get set to five pixels. Okay, let's go see how this is working. So if we look at a sale item, there we go. It is pinned to the top right now. Alright, let's go see what happens if we change this to be pinned to the bottom left. And let's refresh that. And you'll notice that you saw some really weird behavior there when we came back here before we refreshed. And we'll get into that in a minute here. But notice if I do a full refresh on my page that it is now in the bottom left. So when I first came back to here before I refreshed, keep in mind that hot module replacement is at work here and so as we're making changes, hot module replacement, which is part of the web hack server, is applying those changes to our website without doing a full page refresh. And what was happening here is hot module replacement was still doing its job but our directive wasn't noticing all of the changes. And that's why it was pinned actually to the top right and the bottom left and so it made the entire image red. So in the next clip we'll cover why it wasn't noticing those changes. But first I had mentioned that there are a couple of ways to pass data into a directive, so let's look at the other way. The second way isn't quite as expressive but it's much more flexible. So instead of using args and modifiers we're going to pass everything in as an object. So I'm going to set v-pin equal to an expression and that expression is going to be an object. And we'll use that object to define the position. So let's say we want this to be pinned to the bottom with 10 pixels of spacing, and to the right with five pixels of spacing. So this object is going to be passed into the directive and you can see how this is more flexible than the args notation because I can actually pass values for each one of the arguments that I want to pass into the directive. So over in our directive we can access that with binding.value. Okay and then we're going to delete this check here for binding.arg. And then we're going to change our loop to loop over the keys in binding.value. So binding.value is set to whatever we passed into our directive here. So it's this bottom right object. And then we will set that to binding.value.position where position is the value being passed in here. So let's rename this to position just to be a little bit more clear. So for example, in this example here where we're passing in bottom 10 pixels and right 10 pixels, then position here is going to be bottom and right. So we're going to set element.style.bottom to binding.value.bottom. So this would set bottom to 10 pixels in this case. Okay, let's go check that out. There we go. Now you can see that this is showing in the bottom right but you can see there's 10 pixels from the bottom and five pixels from the right. Okay and to show that we can now configure it let's come back over here and let's change right to 50 pixels and see what that does. Okay notice that again, we changed it, but we're not seeing any change here and we won't see that change until we refresh. So there, now we can see that it's 50 pixels to the right. So the question is, why are we not seeing this unless we refresh? Because our hot module replacement is working. But this is actually a problem with our directive where our directive is not noticing the changes. So in the next clip let's take a look at the different directive hook functions. This will help us fix this problem.
+
+
+Let's make it so that we can tell the directive where to pin itself.
+
+###### ARGS
+
+First with use of args
+
+v-pin:position.top.right
+
+position is called the arg
+
+the rest as .top and .right are modifiers
+
+
+We can get them through the param biding
+
+export default {
+  bind: (element, binding) => {
+    element.style.position = 'absolute';
+    element.style.bottom = '5px';
+    element.style.right = '5px';
+  }
+}
+
+It has to properties
+
+args
+modifiers
+
+binding.arg
+binding.modifiers
+
+binding.arg = position
+binding.modifiers = {
+  right: true,
+  top: true
+}
+
+
+export default {
+  bind: (element, binding) => {
+
+    if (binding.arg !== 'position') return;
+
+    Object.keys(binding.modifiers).forEach((key) => {
+      element.style[key] = '5px';
+    });
+
+    element.style.position = 'absolute';
+  }
+}
+
