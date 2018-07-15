@@ -2293,3 +2293,65 @@ export default {
 7.5 - Making Directives Available Globally
       So far we've only been making our directive available to a single component by importing it here. This is a good idea if the directive is really only related to a single component or just a couple of components. But often we'll want to create directives that we want to use throughout our app on lots of different components. When we do that it's better to declare the directive globally so we don't have to declare it in every component like we have here. So let's see how to do that with our pin directive. It's really quite easy. So we'll delete this directives section here and we'll delete the import. And now of course if we look at our site that directive is no longer working. Otherwise this would be pinned in the bottom right. And if we go look at the console, you can see that we're getting errors. Failed to resolve directive pin, so our component doesn't know about this directive. So now let's go declare it globally. We just do that in our main JS file. So if I come in here, let's import our directive here. So import pin directive from shared pin directive. Okay now we can make our view application aware of this directive by just calling view.directive and then we will pass in our pin directive but first we have to give it a name. So this is the pin directive and then we pass in our imported pin directive. Cool, and that's it. This directive should now be available for use in all components in our app. So if we go check that out over here you can see we're no longer getting an error here and if we come over here, there we go. It's pinned to the bottom right. Awesome, so directives are really quite simple to create and they can be really useful for sharing some functionality on elements around your site. Next let's take a look at using filters in view.
 
+
+
+7.6 - Creating a Custom Filter
+
+      View filters allow you to easily transform data in your templates but sometimes the name can be a little misleading. Sometimes when we think of a filter we think of something that takes a list and filters out items from the list. While view filters can certainly be used to do that, that's not all they do. When you think of the word filter, maybe it's easy to compare them to a filter on a camera, which takes a photo and transforms the way it looks in some way. View filters do something similar for data. They take data in as input and output something different. To demonstrate how to create and use a filter let's create a currency filter. You could see here on our cart page that we're displaying the cost of each robot. But it's not formatted very nicely so we'll create a currency filter to format it. To do that we'll create a currency filter here in our shared folder. So I'm going to create a new file here and we'll call this currencyfilter.js. And a filter is really just a function so we will export a function here. And a filter always has a minimum of one parameter and this is the input for the filter so we're going to specify amount here because this is a currency filter. And then our filter is just going to return a string. We'll use a string template here. And our string template is just going to pre pend a $ to the amount. So this looks a little bit weird because we have two $$ but this is just the string template syntax and then we're pre pending a dollar sign here to this amount variable. And then we're just going to format this amount with two decimal points. So we'll just say to fixed here, pass in two decimal points. Alright, now we can add this filter to our component like we did with directives. So over here in our shopping cart component we're going to import our currency filter from shared currency filter. And then we'll just add a filter section and we'll add a currency filter and set that to our currency filter. Alright now up here in our template we can use that right here inside this interpolation expression, so right after cost I'm going to add a pipe and then the name of our filter, so, currency. So as you can see here the first parameter that has passed into the filter is the value that precedes the pipe. So robot.cost is going to be passed in as the first parameter of our currency filter. And then we'll just copy this here and paste it down here where we're showing the cost also. Okay that should do it. Let's go take a look. There we go. So we have our currency format here and if we add a robot that's on sale then that's getting formatted down here also. Excellent. So that's formatting really nicely and that was really easy. But what if we wanted to be able to specify our currency symbol here? Right now we have it hard coded at the $. Well we could do that by passing a second parameter to our filter. So let's see how to do that. So back over here in our currency filter let's add a second parameter called symbol. And we'll use that down here instead of this $. So we'll use another expression here, pass in symbol, and now that symbol is going to be pre pended to the amount. Alright, and if we go to take a look at that right now you can see that undefined as being pre pended to our amount and that's because we are not passing in a currency symbol yet. So back over in our template, we can just pass that in like this. So I'm going to pass in a $ here. And then we need to do the same thing up here so let's pass in the currency symbol here. Okay now if we take a look there we can see that we're getting a $ here. Or I can pass in another symbol like the British pound for example. So here on my U.S. keyboard I'm going to hold down alt and type in 0163 on the numb pad and that gives me a # and I'm just going to copy this and paste this down here. And now if I come over here, there we go. Now we have a #. Okay so we now have a currency filter that takes in additional parameters. And of course you can do any type of data transformation you'd like with a filter since it just takes data in and returns data out. And since filters are just functions we can also just import them inside our component or anywhere else in our application and use them in a component like as a computer prop or whatever. They're just functions so we can use them however we want. Next let's take a look at how to declare this filter globally.
+
+Filter -> View filters allow you to easily transform data in your templates. It transform something in different way.
+They take data in as input and output something different.
+
+
+# And a filter is really just a function so we will export a function here.
+
+# shared/currency-filter.js
+
+# We'll use a string template here. And our string template is just going to pre pend a $ to the amount. So this looks a little bit weird because we have two $$ but this is just the string template syntax and then we're pre pending a dollar sign here to this amount variable.
+
+And then we're just going to format this amount with two decimal points.
+
+Obs: A filter only have at least one parameter.
+
+export default function (amount) {
+  return `$${smount.toFixed(2)}`;
+}
+
+`` -> it is string template. Where we can interpolate.
+
+# So, after the filter file is created you need to import it
+
+# Then, you need to add the filter section in the component that you are importing the filter.
+<script>
+  import currencyFilter from '../shared/currency-filter';
+
+  export default {
+    name: 'Cart',
+    filters: {
+      currency: currencyFilter
+    },
+  }
+</script>
+
+robot.cost -> it the params to the currency filter
+<td class="cost">
+  {{robot.cost | currency}}
+</td>
+
+
+
+# If you want to pass extra params you need to pass it that way
+
+{{robot.cost | currency('$')}}
+
+As a params to the currency filter
+
+And inside the filter file
+
+export default function (amount, symbol) {
+  return `${symbol}${amount.toFixed(2)}`;
+}
+
+
+# And of course you can do any type of data transformation you'd like with a filter since it just takes data in and returns data out. And since filters are just functions we can also just import them inside our component or anywhere else in our application and use them in a component like as a computer prop or whatever.
+
