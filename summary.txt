@@ -2135,3 +2135,52 @@ IF YOU WANT TO CHANGE THE METHOD NAME LIKE THE GETTERS, YOU CAN DO THIS WITH THE
 7.1 - Introduction
 
 Welcome to this module on creating custom directives and filters. In this module we'll learn how to create and use our own directives similar to directives we've already been using, such as b if. We'll also learn about view filters and how to create and use them. We'll learn about creating and using custom directives, passing data to directives, declaring directives locally versus declaring them globally, creating and using filters, and declaring filters locally versus declaring them globally. Alright, let's check it out.
+
+
+7.2 - Creating a Custom Directive
+
+
+      View comes with a handful of built in directives that we've been using already in our application. For example, this v-if attribute is actually a directive. Same v show and v4. But what if we want to create our own directives? Let's explore how to do that. If we take a look at our robot builder, when we select a part that's on sale, it shows this sale icon down here. This is happening in our part selector. If we go take a look at that it's this span right here. And this span is being displayed in the bottom right hand corner using CSS. Imagine though if I had a common need for pinning an element down in the bottom right hand corner. Instead of having to always create a class that absolute positions the element in the bottom right hand corner, I could just create a directive that does it for me. Let's do that for this sale element. So to start with let's come down to the CSS and remove the positioning attributes out of this sale class. So we'll remove position, bottom, and right. And then I want to be able to pin an element to the bottom right hand corner just by adding a directive like this. So here I want to be able to just say v-pin. And then just because I added this directive, this element will be pinned in the bottom right hand corner. So let's go create this directive. So in the shared folder I'm going to create a new file and we'll call that pin-directive.js.
+
+      Alright, and then to start with this is just going to export an object. And then a directive has a handful of methods that act as hooks. One of the most commonly used hooks is the bind hook. So this is just a function that we put on this object. And then this gets called as soon as the directive is bound to its parent component.
+
+      And the first parameter that gets passed in here is the element itself. So in the case of our part selector that's going to be this span element right here. And this pin directive is going to be really simple. I just want to apply some styles to the element that is being passed in. So I can do that by just grabbing this element and then setting the style.position property to absolute. And then I'll also set the bottom and right attributes to five pixels. And then the same thing for the right attribute. And then that's it. That's all there is to creating this directive. Now in our parts selector component we need to import our new directive, so import pin directive from shared pin directive. And then we can just declare this locally in our component with a directive section here and then that takes an object where the key is the name of the directive that you're going to use in your template, and then the directive that we imported, so pin directive. And now because we've defined this as a directive here and named it pin, I can now use that up here in my directive like this. So notice that v- is pre pended to the name of the directive that we created. Okay, this should be working just fine so let's go check it out. There we go. So it's showing in the bottom right hand corner and then just to demonstrate that this is coming from the directive, let's remove the directive from this element and then refresh here. And then there you go. You can see the positioning is off. So let's go ahead and put that back. Awesome, that was really simple. Now let's go take a look at how we can pass some data into our directive.
+
+
+v-if -> Build in directive
+
+
+And then a directive has a handful of methods that act as hooks. One of the most commonly used hooks is the bind hook. So this is just a function that we put on this object. And then this gets called as soon as the directive is bound to its parent component.
+And the first parameter that gets passed in here is the element itself.
+
+export default {
+  bind: (element) => {
+    element.style.position = 'absolute';
+    element.style.bottom = '5px';
+    element.style.right = '5px';
+  }
+}
+
+
+The you need to import the file and create a directive section
+
+<script>
+  import pinDirective from '../shared/pin-directive';
+
+
+  export default {
+    directives: { pin: pinDirective },
+    ...
+  }
+
+</script>
+
+directives: { pin: pinDirective },
+
+pin is the name that will be used as a directive in the tag element like this.
+
+v-pin
+
+Do not forget to prepend the v- before the pin name when you add it to the tag.
+
+the pinDirective is the name data you gave to the directive when it was imported to the file.
