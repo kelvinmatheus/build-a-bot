@@ -2127,3 +2127,11 @@ methods: {
 IF YOU WANT TO CHANGE THE METHOD NAME LIKE THE GETTERS, YOU CAN DO THIS WITH THE ACTIONS AND MUTATIONS TOO.
 
 ...mapGetters('robots', { robotsGetterFoo: 'foo'}),
+
+
+
+7 - Creating Custom Directives and Filters
+
+7.1 - Introduction
+
+Welcome to this module on creating custom directives and filters. In this module we'll learn how to create and use our own directives similar to directives we've already been using, such as b if. We'll also learn about view filters and how to create and use them. We'll learn about creating and using custom directives, passing data to directives, declaring directives locally versus declaring them globally, creating and using filters, and declaring filters locally versus declaring them globally. Alright, let's check it out.

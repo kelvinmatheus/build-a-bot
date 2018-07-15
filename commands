@@ -7,3 +7,29 @@ $ npm run serve
 
 $ Run API server with a different port. It is configure to the course
 $ npm start
+
+
+
+# Vuex is how we can share data among pages.
+
+
+# Install router
+
+
+$ npm install vue-router --save
+
+
+# Place to declare all router of our application
+
+# router/index.js
+
+
+# Vue doesn't provide any of its own custom Ajax or data access methods or libraries. Instead, they allow you to use whatever you want to make HTTP calls. So we're going to use Axios
+$ npm install axios --save
+
+
+actions: {
+  getParts({ state, getters, commit, dispatch}) {
+    axios.get('http://localhost:8018/api/parts');
+  },
+},
