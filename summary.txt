@@ -2355,3 +2355,7 @@ export default function (amount, symbol) {
 
 # And of course you can do any type of data transformation you'd like with a filter since it just takes data in and returns data out. And since filters are just functions we can also just import them inside our component or anywhere else in our application and use them in a component like as a computer prop or whatever.
 
+7.7 - Declaring Filters Globally
+
+Just like we did with directives we can declare filters globally. Right now our currency filter is just imported and exposed only in our shopping cart component. But using a currency filter is pretty common and so we might want to use that elsewhere in our app. So let's declare it globally. So we'll start by removing this import here and the filter here and then over in our main JS file we will import it. This changes a little bit. And then just like we did with directives we can say view.filter and the first parameter is the filter name so currency and then we pass in our filter. And that should do it. This currency filter is now available globally. So if we go back over to our app and add something to our cart, there we go. Our currency filter is now working and it's being shared globally. So, awesome. Now we have a currency filter that we can use anywhere in our app.
+
